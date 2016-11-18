@@ -133,7 +133,11 @@ public class PropertyProducerBean {
 			propertiesCache.put(resourceName, properties);
 
 			try (InputStream i = loader.getResourceAsStream(resourceName)) {
-				properties.load(i);
+				if (PropertyResourceFormat.XML == annotation.resourceFormat()) {
+					properties.loadFromXML(i);
+				} else {
+					properties.load(i);
+				}
 			} catch (IOException e) {
 				throw new InjectionException(e);
 			}

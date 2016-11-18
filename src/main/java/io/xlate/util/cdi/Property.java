@@ -20,6 +20,9 @@ public @interface Property {
 	public String resourceName() default "";
 
 	@Nonbinding
+	public PropertyResourceFormat resourceFormat() default PropertyResourceFormat.PROPERTIES;
+
+	@Nonbinding
 	public String systemProperty() default "";
 
 	@Nonbinding
