@@ -17,5 +17,31 @@
 			<version>1.1-20130918</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<environmentVariables>
+						<INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
+					</environmentVariables>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
