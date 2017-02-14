@@ -9,7 +9,7 @@ Simple CDI extension to support injection of java.util.Properties values
 package property.injection;
 
 import javax.inject.Inject;
-import io.xlate.util.cdi.Property;
+import io.xlate.inject.Property;
 
 public class Example {
     @Inject

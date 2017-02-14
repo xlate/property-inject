@@ -1,4 +1,4 @@
-package io.xlate.util.cdi;
+package io.xlate.inject;
 
 import java.io.IOException;
 import java.io.InputStream;

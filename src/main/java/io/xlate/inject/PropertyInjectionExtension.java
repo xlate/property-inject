@@ -1,4 +1,4 @@
-package io.xlate.util.cdi;
+package io.xlate.inject;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

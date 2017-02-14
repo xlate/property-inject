@@ -1,4 +1,4 @@
-package io.xlate.util.cdi;
+package io.xlate.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

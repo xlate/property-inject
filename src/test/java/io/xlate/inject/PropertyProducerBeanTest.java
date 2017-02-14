@@ -1,4 +1,4 @@
-package io.xlate.util.cdi;
+package io.xlate.inject;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,8 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import io.xlate.inject.PropertyProducerBean;
 
 public class PropertyProducerBeanTest {
 

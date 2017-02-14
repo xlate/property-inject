@@ -1,4 +1,4 @@
-package io.xlate.util.cdi;
+package io.xlate.inject;
 
 public enum PropertyResourceFormat {
 
