@@ -27,224 +27,224 @@ import javax.json.JsonObject;
 @ApplicationScoped
 public class PropertyProducerBean {
 
-	private final Map<String, Properties> propertiesCache;
+    private final Map<String, Properties> propertiesCache;
 
-	public PropertyProducerBean() {
-		propertiesCache = new HashMap<>();
-	}
+    public PropertyProducerBean() {
+        propertiesCache = new HashMap<>();
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public String produceProperty(InjectionPoint injectionPoint) {
-		return getProperty(injectionPoint);
-	}
+    @Produces
+    @Dependent
+    @Property
+    public String produceProperty(InjectionPoint injectionPoint) {
+        return getProperty(injectionPoint);
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public Integer produceIntegerProperty(InjectionPoint injectionPoint) {
-		try {
-			return Integer.valueOf(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public Integer produceIntegerProperty(InjectionPoint injectionPoint) {
+        try {
+            return Integer.valueOf(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public Long produceLongProperty(InjectionPoint injectionPoint) {
-		try {
-			return Long.valueOf(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public Long produceLongProperty(InjectionPoint injectionPoint) {
+        try {
+            return Long.valueOf(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public Float produceFloatProperty(InjectionPoint injectionPoint) {
-		try {
-			return Float.valueOf(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public Float produceFloatProperty(InjectionPoint injectionPoint) {
+        try {
+            return Float.valueOf(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public Double produceDoubleProperty(InjectionPoint injectionPoint) {
-		try {
-			return Double.valueOf(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public Double produceDoubleProperty(InjectionPoint injectionPoint) {
+        try {
+            return Double.valueOf(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
-		try {
-			return new BigDecimal(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
+        try {
+            return new BigDecimal(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public BigInteger produceBigIntegerProperty(InjectionPoint injectionPoint) {
-		try {
-			return new BigInteger(getProperty(injectionPoint));
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public BigInteger produceBigIntegerProperty(InjectionPoint injectionPoint) {
+        try {
+            return new BigInteger(getProperty(injectionPoint));
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public JsonArray produceJsonArrayProperty(InjectionPoint injectionPoint) {
-		try {
-			return Json.createReader(new StringReader(getProperty(injectionPoint))).readArray();
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public JsonArray produceJsonArrayProperty(InjectionPoint injectionPoint) {
+        try {
+            return Json.createReader(new StringReader(getProperty(injectionPoint))).readArray();
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	@Produces
-	@Dependent
-	@Property
-	public JsonObject produceJsonObjectProperty(InjectionPoint injectionPoint) {
-		try {
-			return Json.createReader(new StringReader(getProperty(injectionPoint))).readObject();
-		} catch (Exception e) {
-			throw new InjectionException(e);
-		}
-	}
+    @Produces
+    @Dependent
+    @Property
+    public JsonObject produceJsonObjectProperty(InjectionPoint injectionPoint) {
+        try {
+            return Json.createReader(new StringReader(getProperty(injectionPoint))).readObject();
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
 
-	String getProperty(InjectionPoint point) {
-		final Property annotation = point.getAnnotated().getAnnotation(Property.class);
-		final Class<?> beanType = point.getBean().getBeanClass();
-		ClassLoader loader = beanType.getClassLoader();
+    String getProperty(InjectionPoint point) {
+        final Property annotation = point.getAnnotated().getAnnotation(Property.class);
+        final Class<?> beanType = point.getBean().getBeanClass();
+        ClassLoader loader = beanType.getClassLoader();
 
-		if (loader == null) {
-			loader = ClassLoader.getSystemClassLoader();
-		}
+        if (loader == null) {
+            loader = ClassLoader.getSystemClassLoader();
+        }
 
-		final String propertyName = getPropertyName(point, annotation);
-		final String defaultValue = annotation.defaultValue();
+        final String propertyName = getPropertyName(point, annotation);
+        final String defaultValue = annotation.defaultValue();
 
-		String systemProperty = getSystemProperty(beanType, annotation, propertyName, defaultValue);
+        String systemProperty = getSystemProperty(beanType, annotation, propertyName, defaultValue);
 
-		if (systemProperty != null) {
-			return systemProperty;
-		}
+        if (systemProperty != null) {
+            return systemProperty;
+        }
 
-		String resourceName = annotation.resourceName();
+        String resourceName = annotation.resourceName();
 
-		if (resourceName == null || resourceName.isEmpty()) {
-			resourceName = '/' + beanType.getName().replace('.', '/') + ".properties";
-		}
+        if (resourceName == null || resourceName.isEmpty()) {
+            resourceName = '/' + beanType.getName().replace('.', '/') + ".properties";
+        }
 
-		final Properties properties;
+        final Properties properties;
 
-		if (propertiesCache.containsKey(resourceName)) {
-			properties = propertiesCache.get(resourceName);
-		} else {
-			properties = new Properties();
-			propertiesCache.put(resourceName, properties);
+        if (propertiesCache.containsKey(resourceName)) {
+            properties = propertiesCache.get(resourceName);
+        } else {
+            properties = new Properties();
+            propertiesCache.put(resourceName, properties);
 
-			try (InputStream i = loader.getResourceAsStream(resourceName)) {
-				if (PropertyResourceFormat.XML == annotation.resourceFormat()) {
-					properties.loadFromXML(i);
-				} else {
-					properties.load(i);
-				}
-			} catch (IOException e) {
-				throw new InjectionException(e);
-			}
-		}
+            try (InputStream i = loader.getResourceAsStream(resourceName)) {
+                if (PropertyResourceFormat.XML == annotation.resourceFormat()) {
+                    properties.loadFromXML(i);
+                } else {
+                    properties.load(i);
+                }
+            } catch (IOException e) {
+                throw new InjectionException(e);
+            }
+        }
 
-		return getProperty(properties, propertyName, defaultValue);
-	}
+        return getProperty(properties, propertyName, defaultValue);
+    }
 
-	String getPropertyName(InjectionPoint point, Property annotation) {
-		String propertyName = annotation.name();
+    String getPropertyName(InjectionPoint point, Property annotation) {
+        String propertyName = annotation.name();
 
-		if (propertyName != null && !propertyName.isEmpty()) {
-			return propertyName;
-		}
+        if (!propertyName.isEmpty()) {
+            return propertyName;
+        }
 
-		Member member = point.getMember();
+        Member member = point.getMember();
 
-		if (member instanceof Executable) {
-			Annotated annotated = point.getAnnotated();
-			int p = ((AnnotatedParameter<?>) annotated).getPosition();
-			propertyName = member.getName() + ".arg" + p;
-		} else {
-			propertyName = member.getName();
-		}
+        if (member instanceof Executable) {
+            Annotated annotated = point.getAnnotated();
+            int p = ((AnnotatedParameter<?>) annotated).getPosition();
+            propertyName = member.getName() + ".arg" + p;
+        } else {
+            propertyName = member.getName();
+        }
 
-		return propertyName;
-	}
+        return propertyName;
+    }
 
-	String getSystemProperty(Class<?> beanType, Property annotation, String propertyName, String defaultValue) {
-		String systemProperty = annotation.systemProperty();
+    String getSystemProperty(Class<?> beanType, Property annotation, String propertyName, String defaultValue) {
+        String systemProperty = annotation.systemProperty();
 
-		if (systemProperty.isEmpty()) {
-			StringBuilder systemPropertyKey = new StringBuilder();
-			systemPropertyKey.append(beanType.getName());
-			systemPropertyKey.append('.');
-			systemPropertyKey.append(propertyName);
-			systemProperty = systemPropertyKey.toString();
-		}
+        if (systemProperty.isEmpty()) {
+            StringBuilder systemPropertyKey = new StringBuilder();
+            systemPropertyKey.append(beanType.getName());
+            systemPropertyKey.append('.');
+            systemPropertyKey.append(propertyName);
+            systemProperty = systemPropertyKey.toString();
+        }
 
-		return getProperty(System.getProperties(), systemProperty, defaultValue);
-	}
+        return getProperty(System.getProperties(), systemProperty, defaultValue);
+    }
 
-	String getProperty(Properties properties, String propertyName, String defaultValue) {
-		final String value;
+    String getProperty(Properties properties, String propertyName, String defaultValue) {
+        final String value;
 
-		if (defaultValue.isEmpty()) {
-			value = properties.getProperty(propertyName);
-		} else {
-			value = properties.getProperty(propertyName, defaultValue);
-		}
+        if (defaultValue.isEmpty()) {
+            value = properties.getProperty(propertyName);
+        } else {
+            value = properties.getProperty(propertyName, defaultValue);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	String replaceEnvironmentReferences(String value) {
-		StringBuilder result = new StringBuilder(value.length());
-		Pattern pattern = Pattern.compile("\\$\\{env\\.([_a-zA-Z0-9]+)\\}");
-		Matcher m = pattern.matcher(value);
-		int start = 0;
+    String replaceEnvironmentReferences(String value) {
+        StringBuilder result = new StringBuilder(value.length());
+        Pattern pattern = Pattern.compile("\\$\\{env\\.([_a-zA-Z0-9]+)\\}");
+        Matcher m = pattern.matcher(value);
+        int start = 0;
 
-		while (m.find()) {
-			String variableName = m.group(1);
-			String variableValue = System.getenv(variableName);
+        while (m.find()) {
+            String variableName = m.group(1);
+            String variableValue = System.getenv(variableName);
 
-			result.append(value.substring(start, m.start()));
+            result.append(value.substring(start, m.start()));
 
-			if (variableValue != null) {
-				result.append(variableValue);
-			}
+            if (variableValue != null) {
+                result.append(variableValue);
+            }
 
-			start = m.end();
-		}
+            start = m.end();
+        }
 
-		if (start > 0) {
-			result.append(value.substring(start));
-		} else {
-			return value;
-		}
+        if (start > 0) {
+            result.append(value.substring(start));
+        } else {
+            return value;
+        }
 
-		return result.toString();
-	}
+        return result.toString();
+    }
 }
