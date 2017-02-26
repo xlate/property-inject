@@ -1,4 +1,4 @@
-# property-inject
+# property-inject [![Build Status](https://travis-ci.org/xlate/property-inject.svg?branch=master)](https://travis-ci.org/xlate/property-inject)
 Simple CDI extension to support injection of java.util.Properties values
 
 ## Usage
