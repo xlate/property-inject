@@ -20,7 +20,7 @@ public class Example {
 ```
 In this example, the extension searches for a system property passed to the Java process as package + class + field.
 
->     -Dproperty.injection.Example.simple=theValue
+> -Dcom.example.injection.Example.simple=theValue
 
 If not found in the system properties, searches for property key 'simple' in properties file
 `/com/example/injection/Example.properties` on the class path.
