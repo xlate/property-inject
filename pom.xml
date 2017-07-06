@@ -96,6 +96,18 @@
 			<version>1.0.4</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jglue.cdi-unit</groupId>
+			<artifactId>cdi-unit</artifactId>
+			<version>3.1.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.15</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -116,7 +128,12 @@
 				<configuration>
 					<environmentVariables>
 						<INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
+						<STRING7>string7value.env</STRING7>
 					</environmentVariables>
+					<systemProperties>
+						<java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+						<string6.property.name>string6value.system</string6.property.name>
+					</systemProperties>
 				</configuration>
 			</plugin>
 			<plugin>

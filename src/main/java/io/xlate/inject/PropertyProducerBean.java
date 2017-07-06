@@ -16,6 +16,7 @@
 package io.xlate.inject;
 
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -50,18 +51,16 @@ public class PropertyProducerBean {
     public Integer produceIntegerProperty(InjectionPoint injectionPoint) {
         try {
             final String value = getProperty(injectionPoint);
-            return value != null ? Integer.valueOf(value) : null;
+
+            if (value != null) {
+                return Integer.valueOf(value);
+            }
+
+            final Type type = injectionPoint.getType();
+            return type.equals(int.class) ? Integer.valueOf(0) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
-    }
-
-    @Produces
-    @Dependent
-    @Property
-    public int produceNativeIntegerProperty(InjectionPoint injectionPoint) {
-        final Integer value = produceIntegerProperty(injectionPoint);
-        return value != null ? value.intValue() : 0;
     }
 
     @Produces
@@ -70,18 +69,16 @@ public class PropertyProducerBean {
     public Long produceLongProperty(InjectionPoint injectionPoint) {
         try {
             final String value = getProperty(injectionPoint);
-            return value != null ? Long.valueOf(value) : null;
+
+            if (value != null) {
+                return Long.valueOf(value);
+            }
+
+            final Type type = injectionPoint.getType();
+            return type.equals(long.class) ? Long.valueOf(0L) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
-    }
-
-    @Produces
-    @Dependent
-    @Property
-    public long produceNativeLongProperty(InjectionPoint injectionPoint) {
-        final Long value = produceLongProperty(injectionPoint);
-        return value != null ? value.longValue() : 0;
     }
 
     @Produces
@@ -196,7 +193,7 @@ public class PropertyProducerBean {
         final String value = factory
                 .getProperty(loader, resourceName, annotation.resourceFormat(), propertyName, defaultValue);
 
-        if (annotation.resolveEnvironment()) {
+        if (value != null && annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);
         }
         return value;

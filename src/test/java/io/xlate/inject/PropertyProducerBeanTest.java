@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Member;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -66,14 +67,23 @@ public class PropertyProducerBeanTest {
         return property;
     }
 
+    private InjectionPoint mockInjectionPoint(Property property,
+                                              Class<? extends Member> memberType,
+                                              String memberName,
+                                              int memberPosition) {
+        return mockInjectionPoint(property, String.class, memberType, memberName, memberPosition);
+    }
+
     @SuppressWarnings("unchecked")
     private InjectionPoint mockInjectionPoint(Property property,
+                                              Type type,
                                               Class<? extends Member> memberType,
                                               String memberName,
                                               int memberPosition) {
         InjectionPoint injectionPoint = mock(InjectionPoint.class);
 
         Member member = mock(memberType);
+        when(injectionPoint.getType()).thenReturn(type);
         when(injectionPoint.getMember()).thenReturn(member);
         when(member.getName()).thenReturn(memberName);
 
@@ -201,7 +211,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "integerNull", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, Integer.class, Member.class, "integerNull", -1);
         assertNull(bean.produceIntegerProperty(point));
     }
 
@@ -224,8 +234,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyInteger", -1);
-        assertEquals(42, bean.produceNativeIntegerProperty(point));
+        InjectionPoint point = this.mockInjectionPoint(property, int.class, Member.class, "testProducePropertyInteger", -1);
+        assertEquals(42, (int) bean.produceIntegerProperty(point));
     }
 
     @Test
@@ -235,8 +245,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "integerNull", -1);
-        assertEquals(0, bean.produceNativeIntegerProperty(point));
+        InjectionPoint point = this.mockInjectionPoint(property, int.class, Member.class, "integerNull", -1);
+        assertEquals(0, (int) bean.produceIntegerProperty(point));
     }
 
     /*-****************** produce Long *************************/
@@ -247,7 +257,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyLong", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, Long.class, Member.class, "testProducePropertyLong", -1);
         assertEquals(Long.valueOf(42), bean.produceLongProperty(point));
     }
 
@@ -258,7 +268,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "longNull", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, Long.class, Member.class, "longNull", -1);
         assertNull(bean.produceLongProperty(point));
     }
 
@@ -269,7 +279,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyLongInvalid", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, Long.class, Member.class, "testProducePropertyLongInvalid", -1);
         bean.produceLongProperty(point);
     }
 
@@ -281,8 +291,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyLong", -1);
-        assertEquals(42L, bean.produceNativeLongProperty(point));
+        InjectionPoint point = this.mockInjectionPoint(property, long.class, Member.class, "testProducePropertyLong", -1);
+        assertEquals(42L, (long) bean.produceLongProperty(point));
     }
 
     @Test
@@ -292,8 +302,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "longNull", -1);
-        assertEquals(0L, bean.produceNativeLongProperty(point));
+        InjectionPoint point = this.mockInjectionPoint(property, long.class, Member.class, "longNull", -1);
+        assertEquals(0L, (long) bean.produceLongProperty(point));
     }
 
     /*-****************** produce Float *************************/
