@@ -49,10 +49,19 @@ public class PropertyProducerBean {
     @Property
     public Integer produceIntegerProperty(InjectionPoint injectionPoint) {
         try {
-            return Integer.valueOf(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? Integer.valueOf(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
+    }
+
+    @Produces
+    @Dependent
+    @Property
+    public int produceNativeIntegerProperty(InjectionPoint injectionPoint) {
+        final Integer value = produceIntegerProperty(injectionPoint);
+        return value != null ? value.intValue() : 0;
     }
 
     @Produces
@@ -60,10 +69,19 @@ public class PropertyProducerBean {
     @Property
     public Long produceLongProperty(InjectionPoint injectionPoint) {
         try {
-            return Long.valueOf(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? Long.valueOf(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
+    }
+
+    @Produces
+    @Dependent
+    @Property
+    public long produceNativeLongProperty(InjectionPoint injectionPoint) {
+        final Long value = produceLongProperty(injectionPoint);
+        return value != null ? value.longValue() : 0;
     }
 
     @Produces
@@ -71,10 +89,19 @@ public class PropertyProducerBean {
     @Property
     public Float produceFloatProperty(InjectionPoint injectionPoint) {
         try {
-            return Float.valueOf(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? Float.valueOf(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
+    }
+
+    @Produces
+    @Dependent
+    @Property
+    public float produceNativeFloatProperty(InjectionPoint injectionPoint) {
+        final Float value = produceFloatProperty(injectionPoint);
+        return value != null ? value.floatValue() : 0f;
     }
 
     @Produces
@@ -82,7 +109,8 @@ public class PropertyProducerBean {
     @Property
     public Double produceDoubleProperty(InjectionPoint injectionPoint) {
         try {
-            return Double.valueOf(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? Double.valueOf(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -91,9 +119,18 @@ public class PropertyProducerBean {
     @Produces
     @Dependent
     @Property
+    public double produceNativeDoubleProperty(InjectionPoint injectionPoint) {
+        final Double value = produceDoubleProperty(injectionPoint);
+        return value != null ? value.doubleValue() : 0d;
+    }
+
+    @Produces
+    @Dependent
+    @Property
     public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
         try {
-            return new BigDecimal(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? new BigDecimal(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -104,7 +141,8 @@ public class PropertyProducerBean {
     @Property
     public BigInteger produceBigIntegerProperty(InjectionPoint injectionPoint) {
         try {
-            return new BigInteger(getProperty(injectionPoint));
+            final String value = getProperty(injectionPoint);
+            return value != null ? new BigInteger(value) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -115,7 +153,8 @@ public class PropertyProducerBean {
     @Property
     public JsonArray produceJsonArrayProperty(InjectionPoint injectionPoint) {
         try {
-            return Json.createReader(new StringReader(getProperty(injectionPoint))).readArray();
+            final String value = getProperty(injectionPoint);
+            return value != null ? Json.createReader(new StringReader(value)).readArray() : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -126,7 +165,8 @@ public class PropertyProducerBean {
     @Property
     public JsonObject produceJsonObjectProperty(InjectionPoint injectionPoint) {
         try {
-            return Json.createReader(new StringReader(getProperty(injectionPoint))).readObject();
+            final String value = getProperty(injectionPoint);
+            return value != null ? Json.createReader(new StringReader(value)).readObject() : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -153,7 +193,8 @@ public class PropertyProducerBean {
             resourceName = beanType.getName().replace('.', '/') + ".properties";
         }
 
-        final String value = factory.getProperty(loader, resourceName, annotation.resourceFormat(), propertyName, defaultValue);
+        final String value = factory
+                .getProperty(loader, resourceName, annotation.resourceFormat(), propertyName, defaultValue);
 
         if (annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);
