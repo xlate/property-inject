@@ -6,7 +6,7 @@ Simple CDI extension to support injection of java.util.Properties values
 1. Simple
 
 ```java
-package property.injection;
+package com.example.injection;
 
 import javax.inject.Inject;
 import io.xlate.inject.Property;
@@ -18,13 +18,12 @@ public class Example {
 }
 
 ```
-> In this example, the extension searches for a system property passed to the Java process as package + class + field.
+In this example, the extension searches for a system property passed to the Java process as package + class + field.
 
 >     -Dproperty.injection.Example.simple=theValue
 
-> If not found in the system properties, searches for property key 'simple' in properties file
-> `/property/injection/Example.properties` on the class path.
+If not found in the system properties, searches for property key 'simple' in properties file
+`/com/example/injection/Example.properties` on the class path.
 
-> When neither a system property nor a matching properties file is found, the value will be set to "theDefault" as configured. If no defaultValue
-> is configured, the value will be `null`.
-
+When neither a system property nor a matching properties file is found, the value will be set to "theDefault" as configured. If no defaultValue
+is configured, the value will be `null`.

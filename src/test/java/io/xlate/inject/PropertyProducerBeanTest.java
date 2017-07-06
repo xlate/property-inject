@@ -19,10 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
-import java.util.Properties;
 
+import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -44,12 +43,23 @@ public class PropertyProducerBeanTest {
                                   PropertyResourceFormat resourceFormat,
                                   String systemProperty,
                                   String defaultValue) {
+        return mockProperty(name, resourceName, resourceFormat, systemProperty, defaultValue, false);
+    }
+
+    
+    private Property mockProperty(String name,
+                                  String resourceName,
+                                  PropertyResourceFormat resourceFormat,
+                                  String systemProperty,
+                                  String defaultValue,
+                                  boolean resolveEnvironment) {
         Property property = mock(Property.class);
         when(property.name()).thenReturn(name);
         when(property.resourceName()).thenReturn(resourceName);
         when(property.resourceFormat()).thenReturn(resourceFormat);
         when(property.systemProperty()).thenReturn(systemProperty);
         when(property.defaultValue()).thenReturn(defaultValue);
+        when(property.resolveEnvironment()).thenReturn(resolveEnvironment);
         return property;
     }
 
@@ -79,145 +89,112 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyNameForFieldMember() {
+    public void testGetPropertyForFieldMember() throws Exception {
+        Property property = this.mockProperty("testGetPropertyForFieldMember",
+                                              "io/xlate/inject/PropertyProducerBeanTest.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMember", -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberValue", result);
+    }
+
+    @Test
+    public void testGetSystemPropertyForFieldMember() throws Exception {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
-                                              "");
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "field1", -1);
-        String result = bean.getPropertyName(point, property);
-        assertEquals("field1", result);
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetSystemPropertyForFieldMember", -1);
+        System.setProperty("io.xlate.inject.PropertyProducerBeanTest.testGetSystemPropertyForFieldMember", "val123");
+        String result = bean.getProperty(point);
+        assertEquals("val123", result);
     }
 
     @Test
-    public void testGetPropertyNameForExecutableMember() {
+    public void testGetPropertyForFieldMemberWithDefaultResourceName() throws Exception {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
-                                              "");
-        InjectionPoint point = this.mockInjectionPoint(property, Executable.class, "methodName", 0);
-        String result = bean.getPropertyName(point, property);
-        assertEquals("methodName.arg0", result);
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithDefaultResourceName", -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberWithDefaultResourceNameValue", result);
     }
 
     @Test
-    public void testGetPropertyNameForProvidedName() {
-        String name = "provided.name";
-        Property property = this.mockProperty(name,
+    public void testGetPropertyForFieldMemberWithNullResourceName() throws Exception {
+        Property property = this.mockProperty("",
+                                              null,
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithNullResourceName", -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberWithNullResourceNameValue", result);
+    }
+
+    @Test
+    public void testGetPropertyForFieldMemberWithEnvReplacement() throws Exception {
+        Property property = this.mockProperty("",
+                                              null,
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              true);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithEnvReplacement", -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberWithEnvReplacementValue" + System.getenv("INJECTED_VARIABLE"), result);
+    }
+
+    /*-****************** produce String *************************/
+    @Test
+    public void testProducePropertyString() {
+        Property property = this.mockProperty("testProducePropertyString",
+                                              "io/xlate/inject/PropertyProducerBeanTest.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyString", -1);
+        String result = bean.produceProperty(point);
+        assertEquals("testProducePropertyStringValue", result);
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testProducePropertyStringInvalid() {
+        Property property = this.mockProperty("testProducePropertyStringInvalid",
+                                              "io/xlate/inject/Invalid.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyStringInvalid", -1);
+        bean.produceProperty(point);
+    }
+
+    /*-****************** produce Integer *************************/
+    @Test
+    public void testProducePropertyInteger() {
+        Property property = this.mockProperty("",
+                                              "io/xlate/inject/PropertyProducerBeanTest.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyInteger", -1);
+        assertEquals(Integer.valueOf(42), bean.produceIntegerProperty(point));
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testProducePropertyIntegerInvalid() {
+        Property property = this.mockProperty("testProducePropertyIntegerInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
-                                              "");
-        InjectionPoint point = this.mockInjectionPoint(property, Executable.class, "methodName", 0);
-        String result = bean.getPropertyName(point, property);
-        assertEquals(name, result);
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyIntegerInvalid", -1);
+        bean.produceIntegerProperty(point);
     }
 
-    @Test
-    public void testGetSystemPropertyDefault() {
-        String name = "get.system.property";
-        String systemKey = getClass().getName() + '.' + name;
-        Property property = this.mockProperty(name,
-                                              "",
-                                              PropertyResourceFormat.PROPERTIES,
-                                              "",
-                                              "");
-        System.setProperty(systemKey, "theSystemValue");
-        String result = bean.getSystemProperty(getClass(), property, name, "");
-        assertEquals("theSystemValue", result);
-    }
-
-    @Test
-    public void testGetSystemPropertySpecified() {
-        String name = "get.system.property";
-        String systemKey = "getSystemPropertySpecified";
-        Property property = this.mockProperty(name,
-                                              "",
-                                              PropertyResourceFormat.PROPERTIES,
-                                              systemKey,
-                                              "");
-        System.setProperty(systemKey, "theSystemValue");
-        String result = bean.getSystemProperty(getClass(), property, name, "");
-        assertEquals("theSystemValue", result);
-    }
-
-    @Test
-    public void testGetPropertyFromPropertiesFoundWithDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = "defaulted";
-        String output = bean.getProperty(props, "key1", defaultValue);
-        assertEquals("propertyValue", output);
-    }
-
-    @Test
-    public void testGetPropertyFromPropertiesNotFoundWithDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = "defaulted";
-        String output = bean.getProperty(props, "someOtherKey", defaultValue);
-        assertEquals("defaulted", output);
-    }
-
-    @Test
-    public void testGetPropertyFromPropertiesFoundWithoutDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = "";
-        String output = bean.getProperty(props, "key1", defaultValue);
-        assertEquals("propertyValue", output);
-    }
-
-    @Test
-    public void testGetPropertyFromPropertiesNotFoundWithoutDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = "";
-        String output = bean.getProperty(props, "someOtherKey", defaultValue);
-        assertEquals(null, output);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetPropertyFromPropertiesFoundWithNullDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = null;
-        String output = bean.getProperty(props, "key1", defaultValue);
-        assertEquals("propertyValue", output);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetPropertyFromPropertiesNotFoundWithNullDefault() {
-        Properties props = new Properties();
-        props.setProperty("key1", "propertyValue");
-        String defaultValue = null;
-        String output = bean.getProperty(props, "someOtherKey", defaultValue);
-        assertEquals(null, output);
-    }
-
-    @Test
-    public void testReplaceEnvironmentReferences() {
-        String expected = "Blah blah '" + System.getenv("INJECTED_VARIABLE") + "' bLaH blah";
-        String input = "Blah blah '${env.INJECTED_VARIABLE}' bLaH blah";
-        String output = bean.replaceEnvironmentReferences(input);
-        assertEquals(expected, output);
-    }
-
-    @Test
-    public void testReplaceEnvironmentReferencesMissing() {
-        String expected = "Blah blah '' bLaH blah";
-        String input = "Blah blah '${env.INJECTED_VARIABLE2}' bLaH blah";
-        String output = bean.replaceEnvironmentReferences(input);
-        assertEquals(expected, output);
-    }
-
-    @Test
-    public void testReplaceEnvironmentReferencesInvalid() {
-        String expected = "Blah blah '${INJECTED_VARIABLE2}' bLaH blah";
-        String input = "Blah blah '${INJECTED_VARIABLE2}' bLaH blah";
-        String output = bean.replaceEnvironmentReferences(input);
-        assertEquals(expected, output);
-    }
 }
