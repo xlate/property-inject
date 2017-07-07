@@ -48,10 +48,11 @@ public class PropertyProducerBeanTest {
                                   PropertyResourceFormat resourceFormat,
                                   String systemProperty,
                                   String defaultValue) {
-        return mockProperty(name, resourceName, resourceFormat, systemProperty, defaultValue, false);
+        return mockProperty(name, "", resourceName, resourceFormat, systemProperty, defaultValue, false);
     }
 
     private Property mockProperty(String name,
+                                  String pattern,
                                   String resourceName,
                                   PropertyResourceFormat resourceFormat,
                                   String systemProperty,
@@ -59,6 +60,7 @@ public class PropertyProducerBeanTest {
                                   boolean resolveEnvironment) {
         Property property = mock(Property.class);
         when(property.name()).thenReturn(name);
+        when(property.pattern()).thenReturn(pattern);
         when(property.resourceName()).thenReturn(resourceName);
         when(property.resourceFormat()).thenReturn(resourceFormat);
         when(property.systemProperty()).thenReturn(systemProperty);
@@ -156,6 +158,7 @@ public class PropertyProducerBeanTest {
     @Test
     public void testGetPropertyForFieldMemberWithEnvReplacement() throws Exception {
         Property property = this.mockProperty("",
+                                              "",
                                               null,
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
@@ -488,6 +491,53 @@ public class PropertyProducerBeanTest {
         InjectionPoint point = this
                 .mockInjectionPoint(property, Member.class, "testProducePropertyBigIntegerInvalid", -1);
         bean.produceBigIntegerProperty(point);
+    }
+
+    /*-****************** produce Date *************************/
+    @Test
+    public void testProduceDateProperty() {
+        Property property = this.mockProperty("",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDateProperty", -1);
+        assertEquals(java.sql.Timestamp.valueOf("2017-07-01 23:45:16.432").getTime(), bean.produceDateProperty(point).getTime());
+    }
+
+    @Test
+    public void testProduceDatePropertyPattern() {
+        Property property = this.mockProperty("",
+                                              "M/d/yyyy H:mm:ss.SSS z",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              false);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDatePropertyPattern", -1);
+        assertEquals(java.sql.Timestamp.valueOf("2017-07-01 07:45:16.432").getTime(), bean.produceDateProperty(point).getTime());
+    }
+
+    @Test
+    public void testProduceDatePropertyNull() {
+        Property property = this.mockProperty("",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "DateNull", -1);
+        assertNull(bean.produceDateProperty(point));
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testProduceDatePropertyInvalid() {
+        Property property = this.mockProperty("testProduceDatePropertyInvalid",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDatePropertyInvalid", -1);
+        bean.produceDateProperty(point);
     }
 
     /*-****************** produce JsonArray *************************/

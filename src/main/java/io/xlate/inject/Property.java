@@ -47,6 +47,10 @@ public @interface Property {
     @Nonbinding
     public String name() default "";
 
+    // TODO: JavaDoc
+    @Nonbinding
+    public String pattern() default "";
+
     /**
      * The name of the file or resource on the class path where the property
      * give by {@link #name} can be found. E.g. MyProperties.properties. If left

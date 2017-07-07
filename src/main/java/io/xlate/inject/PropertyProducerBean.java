@@ -19,6 +19,9 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
@@ -97,6 +100,7 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public float produceNativeFloatProperty(InjectionPoint injectionPoint) {
+        // TODO: move to float property
         final Float value = produceFloatProperty(injectionPoint);
         return value != null ? value.floatValue() : 0f;
     }
@@ -117,6 +121,7 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public double produceNativeDoubleProperty(InjectionPoint injectionPoint) {
+        // TODO: move to double property
         final Double value = produceDoubleProperty(injectionPoint);
         return value != null ? value.doubleValue() : 0d;
     }
@@ -125,6 +130,7 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
+        // TODO: Decimal Format
         try {
             final String value = getProperty(injectionPoint);
             return value != null ? new BigDecimal(value) : null;
@@ -137,9 +143,32 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public BigInteger produceBigIntegerProperty(InjectionPoint injectionPoint) {
+        // TODO: Decimal Format
         try {
             final String value = getProperty(injectionPoint);
             return value != null ? new BigInteger(value) : null;
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
+
+    @Produces
+    @Dependent
+    @Property
+    public Date produceDateProperty(InjectionPoint injectionPoint) {
+        try {
+            final String value = getProperty(injectionPoint);
+            final Date date;
+            if (value != null) {
+                final Property annotation = injectionPoint.getAnnotated()
+                                                          .getAnnotation(Property.class);
+                final String pattern = annotation.pattern();
+                DateFormat format = new SimpleDateFormat(pattern.isEmpty() ? "yyyy-MM-dd'T'HH:mm:ss.SSSZ" : pattern);
+                date = format.parse(value);
+            } else {
+                date = null;
+            }
+            return date;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
