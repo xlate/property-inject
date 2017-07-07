@@ -24,6 +24,8 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -502,7 +504,8 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDateProperty", -1);
-        assertEquals(java.sql.Timestamp.valueOf("2017-07-01 23:45:16.432").getTime(), bean.produceDateProperty(point).getTime());
+        assertEquals(LocalDateTime.parse("2017-07-01T23:45:16.432").atZone(ZoneId.of("-0400")).toInstant().toEpochMilli(),
+                     bean.produceDateProperty(point).getTime());
     }
 
     @Test
@@ -515,7 +518,8 @@ public class PropertyProducerBeanTest {
                                               Property.DEFAULT_NULL,
                                               false);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDatePropertyPattern", -1);
-        assertEquals(java.sql.Timestamp.valueOf("2017-07-01 07:45:16.432").getTime(), bean.produceDateProperty(point).getTime());
+        assertEquals(LocalDateTime.parse("2017-07-01T07:45:16.432").atZone(ZoneId.of("-0400")).toInstant().toEpochMilli(),
+                     bean.produceDateProperty(point).getTime());
     }
 
     @Test
