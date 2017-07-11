@@ -100,16 +100,19 @@ class PropertyFactory {
             }
 
             Enumeration<URL> resources = loader.getResources(resourceName);
-            
+
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
+                InputStream resourceStream = resource.openStream();
 
-                try (InputStream resourceStream = resource.openStream()) {
+                try {
                     if (PropertyResourceFormat.XML == format) {
                         properties.loadFromXML(resourceStream);
                     } else {
                         properties.load(resourceStream);
                     }
+                } finally {
+                    resourceStream.close();
                 }
             }
         }

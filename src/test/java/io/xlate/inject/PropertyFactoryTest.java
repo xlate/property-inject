@@ -2,12 +2,16 @@ package io.xlate.inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -184,6 +188,33 @@ public class PropertyFactoryTest {
         assertEquals("testGetPropertyCachedWithoutClassLoaderValue", output);
         String output2 = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
         assertEquals(output, output2);
+    }
+
+    @Test(expected = java.io.FileNotFoundException.class)
+    public void testGetPropertyNullOpenStream() throws IOException {
+        final ClassLoader classLoader = mock(ClassLoader.class);
+        when(classLoader.getResources(any(String.class))).thenReturn(new Enumeration<URL>() {
+            int i = 0;
+            @Override
+            public boolean hasMoreElements() {
+                return ++i == 1;
+            }
+            @Override
+            public URL nextElement() {
+                try {
+                    return new URL("file:////tmp/does-not-exist.properties");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+        });
+        final String resourceName = null;
+        final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
+        final String propertyName = null;
+        final String defaultValue = null;
+        bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
     }
 
     @Test

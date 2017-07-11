@@ -197,6 +197,63 @@ public class PropertyProducerBeanTest {
         bean.produceProperty(point);
     }
 
+    /*-****************** produce Boolean *************************/
+    @Test
+    public void testProducePropertyBoolean() {
+        Property property = this.mockProperty("",
+                                              "io/xlate/inject/test/test.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyBoolean", -1);
+        assertEquals(Boolean.TRUE, bean.produceBooleanProperty(point));
+    }
+
+    @Test
+    public void testProducePropertyBooleanNull() {
+        Property property = this.mockProperty("",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Boolean.class, Member.class, "BooleanNull", -1);
+        assertNull(bean.produceBooleanProperty(point));
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testProducePropertyBooleanInvalid() {
+        Property property = this.mockProperty("testProducePropertyBooleanInvalid",
+                                              "io/xlate/inject/Invalid.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyBooleanInvalid", -1);
+        bean.produceBooleanProperty(point);
+    }
+
+    /*-****************** produce native Boolean (boolean) *************************/
+    @Test
+    public void testProducePropertyNativeBoolean() {
+        Property property = this.mockProperty("",
+                                              "io/xlate/inject/test/test.xml",
+                                              PropertyResourceFormat.XML,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, int.class, Member.class, "testProducePropertyNativeBoolean", -1);
+        assertEquals(true, (boolean) bean.produceBooleanProperty(point));
+    }
+
+    @Test
+    public void testProducePropertyNativeBooleanFalse() {
+        Property property = this.mockProperty("",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property, boolean.class, Member.class, "BooleanNull", -1);
+        assertEquals(false, (boolean) bean.produceBooleanProperty(point));
+    }
+
     /*-****************** produce Integer *************************/
     @Test
     public void testProducePropertyInteger() {

@@ -3,4 +3,5 @@
 <properties>
 	<entry key="testGetPropertyFromXmlWithClassLoader">testGetPropertyFromXmlWithClassLoaderValue</entry>
 	<entry key="testGetPropertyFromXmlWithoutClassLoader">testGetPropertyFromXmlWithoutClassLoaderValue</entry>
+	<entry key="testProducePropertyNativeBoolean">true</entry>
 </properties>
