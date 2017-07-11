@@ -1,9 +1,7 @@
 # property-inject [![Build Status](https://travis-ci.org/xlate/property-inject.svg?branch=master)](https://travis-ci.org/xlate/property-inject)
 Simple CDI extension to support injection of java.util.Properties values
 
-## Usage
-
-Maven configuration
+## Maven Configuration
 
 ```xml
 <dependency>
@@ -27,6 +25,8 @@ If you wish to use a SNAPSHOT version, add the Sonatype OSS repository to your M
 	</repository>
 </repositories>
 ```
+
+## Usage
 
 1. Simple
 
