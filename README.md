@@ -3,6 +3,31 @@ Simple CDI extension to support injection of java.util.Properties values
 
 ## Usage
 
+Maven configuration
+
+```xml
+<dependency>
+	<groupId>io.xlate</groupId>
+	<artifactId>property-inject</artifactId>
+	<version>0.0.2</version>
+</dependency>
+```
+
+If you wish to use a SNAPSHOT version, add the Sonatype OSS repository to your Maven configuration.
+
+```xml
+<repositories>
+	<repository>
+		<id>oss-sonatype</id>
+		<name>oss-sonatype</name>
+		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
+</repositories>
+```
+
 1. Simple
 
 ```java
