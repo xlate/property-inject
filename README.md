@@ -7,7 +7,7 @@ Simple CDI extension to support injection of java.util.Properties values
 <dependency>
 	<groupId>io.xlate</groupId>
 	<artifactId>property-inject</artifactId>
-	<version>0.0.2</version>
+	<version>1.0.0</version>
 </dependency>
 ```
 
