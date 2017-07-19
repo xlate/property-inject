@@ -20,8 +20,11 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
@@ -34,6 +37,8 @@ import javax.json.JsonObject;
 
 @ApplicationScoped
 public class PropertyProducerBean {
+
+    private final static Logger logger = Logger.getLogger(PropertyProducerBean.class.getName());
 
     private final PropertyFactory factory = new PropertyFactory();
 
@@ -108,19 +113,16 @@ public class PropertyProducerBean {
     public Float produceFloatProperty(InjectionPoint injectionPoint) {
         try {
             final String value = getProperty(injectionPoint);
-            return value != null ? Float.valueOf(value) : null;
+
+            if (value != null) {
+                return Float.valueOf(value);
+            }
+
+            final Type type = injectionPoint.getType();
+            return type.equals(float.class) ? Float.valueOf(0f) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
-    }
-
-    @Produces
-    @Dependent
-    @Property
-    public float produceNativeFloatProperty(InjectionPoint injectionPoint) {
-        // TODO: move to float property
-        final Float value = produceFloatProperty(injectionPoint);
-        return value != null ? value.floatValue() : 0f;
     }
 
     @Produces
@@ -129,29 +131,13 @@ public class PropertyProducerBean {
     public Double produceDoubleProperty(InjectionPoint injectionPoint) {
         try {
             final String value = getProperty(injectionPoint);
-            return value != null ? Double.valueOf(value) : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
-    }
 
-    @Produces
-    @Dependent
-    @Property
-    public double produceNativeDoubleProperty(InjectionPoint injectionPoint) {
-        // TODO: move to double property
-        final Double value = produceDoubleProperty(injectionPoint);
-        return value != null ? value.doubleValue() : 0d;
-    }
+            if (value != null) {
+                return Double.valueOf(value);
+            }
 
-    @Produces
-    @Dependent
-    @Property
-    public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
-        // TODO: Decimal Format
-        try {
-            final String value = getProperty(injectionPoint);
-            return value != null ? new BigDecimal(value) : null;
+            final Type type = injectionPoint.getType();
+            return type.equals(double.class) ? Double.valueOf(0d) : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -161,10 +147,46 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public BigInteger produceBigIntegerProperty(InjectionPoint injectionPoint) {
-        // TODO: Decimal Format
+        try {
+            final BigDecimal value = produceBigDecimalProperty(injectionPoint);
+
+            if (value != null) {
+                return value.toBigInteger();
+            }
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+
+        return null;
+    }
+
+    @Produces
+    @Dependent
+    @Property
+    public BigDecimal produceBigDecimalProperty(InjectionPoint injectionPoint) {
         try {
             final String value = getProperty(injectionPoint);
-            return value != null ? new BigInteger(value) : null;
+            final BigDecimal number;
+
+            if (value != null) {
+                final Property annotation = injectionPoint.getAnnotated().getAnnotation(Property.class);
+                final String pattern = annotation.pattern();
+
+                if (pattern.isEmpty()) {
+                    number = new BigDecimal(value);
+                } else {
+                    if (logger.isLoggable(Level.FINER)) {
+                        logger.log(Level.FINER, "Parsing number with using pattern [" + pattern + ']');
+                    }
+
+                    DecimalFormat format = new DecimalFormat(pattern);
+                    format.setParseBigDecimal(true);
+                    number = (BigDecimal) format.parse(value);
+                }
+            } else {
+                number = null;
+            }
+            return number;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
@@ -177,9 +199,9 @@ public class PropertyProducerBean {
         try {
             final String value = getProperty(injectionPoint);
             final Date date;
+
             if (value != null) {
-                final Property annotation = injectionPoint.getAnnotated()
-                                                          .getAnnotation(Property.class);
+                final Property annotation = injectionPoint.getAnnotated().getAnnotation(Property.class);
                 final String pattern = annotation.pattern();
                 DateFormat format = new SimpleDateFormat(pattern.isEmpty() ? "yyyy-MM-dd'T'HH:mm:ss.SSSZ" : pattern);
                 date = format.parse(value);

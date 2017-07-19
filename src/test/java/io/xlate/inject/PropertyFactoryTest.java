@@ -1,6 +1,7 @@
 package io.xlate.inject;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -12,6 +13,7 @@ import java.lang.reflect.Member;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -144,6 +146,25 @@ public class PropertyFactoryTest {
         assertEquals("testGetPropertyWithClassLoaderValue", output);
     }
 
+    @Test(expected = NoSuchElementException.class)
+    public void testGetResourcesForceNoSuchElement() throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        Enumeration<URL> result = bean.getResources(classLoader, "file:/dev/null");
+        assertNotNull(result.nextElement());
+        result.nextElement();
+    }
+
+    @Test
+    public void testGetPropertyFromFileWithClassLoader() throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final String resourceName = new java.io.File("target/test-classes/io/xlate/inject/test/test.properties").toURI().toURL().toString();
+        final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
+        final String propertyName = "testGetPropertyWithClassLoader";
+        final String defaultValue = "DEFAULT";
+        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        assertEquals("testGetPropertyWithClassLoaderValue", output);
+    }
+
     @Test
     public void testGetPropertyFromXmlWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
@@ -210,7 +231,7 @@ public class PropertyFactoryTest {
             }
 
         });
-        final String resourceName = null;
+        final String resourceName = "file:////tmp/does-not-exist.properties";
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = null;
         final String defaultValue = null;

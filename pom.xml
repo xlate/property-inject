@@ -17,7 +17,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.xlate</groupId>
 	<artifactId>property-inject</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<name>Property Injection for Java</name>
 	<description>Inject values from java.util.Properties using the Java CDI framework</description>

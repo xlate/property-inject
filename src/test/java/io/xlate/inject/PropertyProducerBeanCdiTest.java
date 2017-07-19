@@ -63,57 +63,57 @@ public class PropertyProducerBeanCdiTest {
     int int3;
 
     @Test
-    public void testString1() {
+    public void testString1_DefaultLookup() {
         assertEquals("string1value", string1);
     }
 
     @Test
-    public void testString2() {
+    public void testString2_DefaultLookup_NotFound() {
         assertNull(string2);
     }
 
     @Test
-    public void testString3() {
+    public void testString3_OverriddenName() {
         assertEquals("string3value", string3);
     }
 
     @Test
-    public void testString4() {
+    public void testString4_OverriddenBundle() {
         assertEquals("string4value", string4);
     }
 
     @Test
-    public void testString5() {
+    public void testString5_NotFoundWithDefaultValue() {
         assertEquals("string5default", string5);
     }
 
     @Test
-    public void testString6() {
+    public void testString6_FoundInSystemProperties() {
         assertEquals("string6value.system", string6);
     }
 
     @Test
-    public void testString7() {
+    public void testString7_FoundInEnvironmentVar() {
         assertEquals("string7value.env", string7);
     }
 
     @Test
-    public void testString8() {
+    public void testString8_NotFound() {
         assertNull(string8);
     }
 
     @Test
-    public void testInt1() {
+    public void testInt1_DefaultLookup() {
         assertEquals(42, int1);
     }
 
     @Test
-    public void testInt2() {
+    public void testInt2_NotFoundWithDefaultValue() {
         assertEquals(42, int2);
     }
 
     @Test
-    public void testInt3() {
+    public void testInt3_NotFoundWithPrimitiveDefaultValue() {
         assertEquals(0, int3);
     }
 }

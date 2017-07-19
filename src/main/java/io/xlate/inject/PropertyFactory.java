@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
+import java.net.URI;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,7 +101,7 @@ class PropertyFactory {
                 loader = classLoader;
             }
 
-            Enumeration<URL> resources = loader.getResources(resourceName);
+            Enumeration<URL> resources = getResources(loader, resourceName);
 
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
@@ -118,6 +120,37 @@ class PropertyFactory {
         }
 
         return getProperty(properties, propertyName, defaultValue);
+    }
+
+    Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException {
+        Enumeration<URL> resources;
+        URI identifier = URI.create(resourceName);
+
+        if (identifier.getScheme() != null) {
+            final URL resource = identifier.toURL();
+
+            resources = new Enumeration<URL>() {
+                boolean hasMore = true;
+
+                @Override
+                public boolean hasMoreElements() {
+                    return hasMore;
+                }
+
+                @Override
+                public URL nextElement() {
+                    if (!hasMore) {
+                        throw new NoSuchElementException();
+                    }
+                    hasMore = false;
+                    return resource;
+                }
+            };
+        } else {
+            resources = loader.getResources(resourceName);
+        }
+
+        return resources;
     }
 
     String getProperty(final Properties properties, final String propertyName, final String defaultValue) {

@@ -26,6 +26,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -112,7 +118,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMember", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, String.class, Member.class, "testGetPropertyForFieldMember", -1);
         String result = bean.getProperty(point);
         assertEquals("testGetPropertyForFieldMemberValue", result);
     }
@@ -411,7 +417,7 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyFloat", -1);
-        assertEquals(42.0f, bean.produceNativeFloatProperty(point), 0.0f);
+        assertEquals(42.0f, bean.produceFloatProperty(point), 0.0f);
     }
 
     @Test
@@ -421,8 +427,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "floatNull", -1);
-        assertEquals(0.0f, bean.produceNativeFloatProperty(point), 0.0f);
+        InjectionPoint point = this.mockInjectionPoint(property, float.class, Member.class, "floatNull", -1);
+        assertEquals(0.0f, bean.produceFloatProperty(point), 0.0f);
     }
 
     /*-****************** produce Double *************************/
@@ -433,7 +439,7 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyDouble", -1);
+        InjectionPoint point = this.mockInjectionPoint(property, float.class, Member.class, "testProducePropertyDouble", -1);
         assertEquals(Double.valueOf(42.0d), bean.produceDoubleProperty(point));
     }
 
@@ -467,8 +473,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyDouble", -1);
-        assertEquals(42.0d, bean.produceNativeDoubleProperty(point), 0.0d);
+        InjectionPoint point = this.mockInjectionPoint(property, double.class, Member.class, "testProducePropertyDouble", -1);
+        assertEquals(42.0d, bean.produceDoubleProperty(point), 0.0d);
     }
 
     @Test
@@ -478,8 +484,8 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "DoubleNull", -1);
-        assertEquals(0.0d, bean.produceNativeDoubleProperty(point), 0.0d);
+        InjectionPoint point = this.mockInjectionPoint(property, double.class, Member.class, "DoubleNull", -1);
+        assertEquals(0.0d, bean.produceDoubleProperty(point), 0.0d);
     }
 
     /*-****************** produce BigDecimal *************************/
@@ -505,6 +511,19 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceBigDecimalProperty(point));
     }
 
+    @Test
+    public void testProducePropertyBigDecimalFormatted() {
+        Property property = this.mockProperty("",
+                                              "#,##0",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              false);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigDecimalFormatted", -1);
+        assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), 0f);
+    }
+
     @Test(expected = InjectionException.class)
     public void testProducePropertyBigDecimalInvalid() {
         Property property = this.mockProperty("testProducePropertyBigDecimalInvalid",
@@ -515,6 +534,35 @@ public class PropertyProducerBeanTest {
         InjectionPoint point = this
                 .mockInjectionPoint(property, Member.class, "testProducePropertyBigDecimalInvalid", -1);
         bean.produceBigDecimalProperty(point);
+    }
+
+    @Test
+    public void testProducePropertyBigDecimalFormattedLoggingFine() {
+        Property property = this.mockProperty("",
+                                              "#,##0",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              false);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigDecimalFormatted", -1);
+        Logger extLogger = Logger.getLogger(bean.getClass().getName());
+        extLogger.setLevel(Level.FINE);
+        final List<String> messages = new ArrayList<>(0);
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                messages.add(record.getMessage());
+            }
+            @Override
+            public void flush() {}
+            @Override
+            public void close() throws SecurityException {}
+        };
+        extLogger.addHandler(handler);
+        assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), 0f);
+        extLogger.removeHandler(handler);
+        org.junit.Assert.assertEquals(0, messages.size());
     }
 
     /*-****************** produce BigInteger *************************/
@@ -538,6 +586,32 @@ public class PropertyProducerBeanTest {
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigIntegerNull", -1);
         assertNull(bean.produceBigIntegerProperty(point));
+    }
+
+    @Test
+    public void testProducePropertyBigIntegerFormatted() {
+        Property property = this.mockProperty("",
+                                              "#,##0",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              false);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigIntegerFormatted", -1);
+        assertEquals(1_950_042, bean.produceBigIntegerProperty(point).intValue());
+    }
+
+    @Test
+    public void testProducePropertyBigIntegerFormattedTruncated() {
+        Property property = this.mockProperty("",
+                                              "#,##0",
+                                              "",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              false);
+        InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigIntegerFormattedTruncated", -1);
+        assertEquals(1_950_042, bean.produceBigIntegerProperty(point).intValue());
     }
 
     @Test(expected = InjectionException.class)
