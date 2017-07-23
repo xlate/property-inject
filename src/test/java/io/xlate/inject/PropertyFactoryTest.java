@@ -31,6 +31,7 @@ public class PropertyFactoryTest {
         bean = new PropertyFactory();
     }
 
+    @SuppressWarnings("deprecation")
     private Property mockProperty(String name,
                                   String resourceName,
                                   PropertyResourceFormat resourceFormat,

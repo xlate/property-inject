@@ -85,6 +85,14 @@ class PropertyFactory {
                        final String propertyName,
                        final String defaultValue) throws IOException {
 
+        final Properties properties = getProperties(classLoader, resourceName, format);
+        return getProperty(properties, propertyName, defaultValue);
+    }
+
+    Properties getProperties(final ClassLoader classLoader,
+                             final String resourceName,
+                             final PropertyResourceFormat format) throws IOException {
+
         final Properties properties;
 
         if (propertiesCache.containsKey(resourceName)) {
@@ -119,7 +127,7 @@ class PropertyFactory {
             }
         }
 
-        return getProperty(properties, propertyName, defaultValue);
+        return properties;
     }
 
     Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException {

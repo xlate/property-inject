@@ -253,14 +253,17 @@ public class PropertyProducerBean {
             return systemProperty;
         }
 
+        @SuppressWarnings("deprecation")
         String resourceName = annotation.resourceName();
 
         if (resourceName == null || resourceName.isEmpty()) {
             resourceName = beanType.getName().replace('.', '/') + ".properties";
         }
 
-        final String value = factory
-                .getProperty(loader, resourceName, annotation.resourceFormat(), propertyName, defaultValue);
+        @SuppressWarnings("deprecation")
+        PropertyResourceFormat format = annotation.resourceFormat();
+
+        final String value = factory.getProperty(loader, resourceName, format, propertyName, defaultValue);
 
         if (value != null && annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);

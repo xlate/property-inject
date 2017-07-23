@@ -26,89 +26,28 @@ import javax.inject.Qualifier;
 @Qualifier
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Property {
-
-    public static final String DEFAULT_NULL = "io.xlate.inject.Property.DEFAULT_NULL";
-
-    /**
-     * The name of the property. This is typically the key name in the
-     * property's key-value pair. If left unspecified, the name will default to
-     * the field name for Field injections or to the method name plus the
-     * argument position (e.g. someMethod.arg0, someMethod.arg1...) for method
-     * injections.
-     *
-     * Note that if the property is first found in
-     * {@link java.lang.System#getProperties} (using the default name or as
-     * provided in the {@link #systemProperty} parameter), it will take
-     * precedence over a named property.
-     *
-     * @return the property name
-     */
-    @Nonbinding
-    public String name() default "";
-
-    // TODO: JavaDoc
-    @Nonbinding
-    public String pattern() default "";
-
-    // TODO: JavaDoc
-    @Nonbinding
-    public PropertyResource resource() default @PropertyResource;
-
+public @interface PropertyResource {
     /**
      * The name of the file or resource on the class path where the property
      * give by {@link #name} can be found. E.g. MyProperties.properties. If left
      * unspecified, the property injection processor will search for a
      * properties file having the same path and name as the class where this
-     * {@link Property} annotation is defined.
-     *
-     * Note that if the property is first found in
-     * {@link java.lang.System#getProperties} (using the default name or as
-     * provided in the {@link #systemProperty} parameter), it will take
-     * precedence over a named property.
-     *
-     * @deprecated use {@link #resource} instead
+     * {@link PropertyResource} annotation is defined.
      *
      * @return the resource name on the class path containing the property
      */
     @Nonbinding
-    @Deprecated
-    public String resourceName() default "";
+    public String url() default "";
 
     /**
      * The format of the resource named by {@link #resourceName}. Supported
      * formats are XML and Properties (key/value pairs).
      *
-     * @deprecated use {@link #resource} instead
-     *
      * @return the <code>PropertyResourceFormat</code> of the Properties
      *         resource
      */
     @Nonbinding
-    @Deprecated
-    public PropertyResourceFormat resourceFormat() default PropertyResourceFormat.PROPERTIES;
-
-    /**
-     * The name of the property to be found in
-     * {@link java.lang.System#getProperties}, typically provided by the Java
-     * command line. If not specified, this value will default to the
-     * fully-qualified class name of the owning class, plus a '.', plus the
-     * {@link #name} (either specified or defaulted).
-     *
-     * @return the system property name
-     */
-    @Nonbinding
-    public String systemProperty() default "";
-
-    /**
-     * The default value of this property. If left unspecified, the default
-     * value will be null for object types and the standard default value for
-     * primitives, e.g. 0 for <code>int</code>.
-     *
-     * @return the default value
-     */
-    @Nonbinding
-    public String defaultValue() default DEFAULT_NULL;
+    public PropertyResourceFormat format() default PropertyResourceFormat.PROPERTIES;
 
     /**
      * Value to indicate whether the property injection processor should replace

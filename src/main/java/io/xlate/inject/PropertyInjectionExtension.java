@@ -1,17 +1,17 @@
 /*******************************************************************************
  * Copyright 2017 xlate.io, http://www.xlate.io
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  *******************************************************************************/
 package io.xlate.inject;
 
@@ -25,20 +25,26 @@ import javax.enterprise.inject.spi.Extension;
 
 public class PropertyInjectionExtension implements Extension {
 
-	private final static Logger logger = Logger.getLogger(PropertyInjectionExtension.class.getName());
+    private final static Logger logger = Logger.getLogger(PropertyInjectionExtension.class.getName());
 
-	void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager beanManager) {
-		final String method = "PropertyInjectionExtension.beforeBeanDiscovery()";
+    void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager beanManager) {
+        final String method = "PropertyInjectionExtension.beforeBeanDiscovery()";
 
-		if (logger.isLoggable(Level.FINER)) {
-			logger.log(Level.FINER, method + " beanManager = " + beanManager);
-		}
+        if (logger.isLoggable(Level.FINER)) {
+            logger.log(Level.FINER, method + " beanManager = " + beanManager);
+        }
 
-		final Class<?> type = PropertyProducerBean.class;
-		event.addAnnotatedType(beanManager.createAnnotatedType(type));
+        addAnnotatedType(event, beanManager, PropertyProducerBean.class);
+        addAnnotatedType(event, beanManager, PropertyResourceProducerBean.class);
+    }
 
-		if (logger.isLoggable(Level.FINER)) {
-			logger.log(Level.FINER, method + " added type: " + type.getName());
-		}
-	}
+    void addAnnotatedType(BeforeBeanDiscovery event, BeanManager beanManager, Class<?> type) {
+        final String method = "PropertyInjectionExtension.addAnnotatedType()";
+
+        event.addAnnotatedType(beanManager.createAnnotatedType(type));
+
+        if (logger.isLoggable(Level.FINER)) {
+            logger.log(Level.FINER, method + " added type: " + type.getName());
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class PropertyInjectionExtensionTest {
         extLogger.addHandler(handler);
         ext.beforeBeanDiscovery(event, beanManager);
         extLogger.removeHandler(handler);
-        org.junit.Assert.assertEquals(2, messages.size());
+        org.junit.Assert.assertEquals(3, messages.size());
     }
 
     @Test

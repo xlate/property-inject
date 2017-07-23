@@ -59,6 +59,7 @@ public class PropertyProducerBeanTest {
         return mockProperty(name, "", resourceName, resourceFormat, systemProperty, defaultValue, false);
     }
 
+    @SuppressWarnings("deprecation")
     private Property mockProperty(String name,
                                   String pattern,
                                   String resourceName,
