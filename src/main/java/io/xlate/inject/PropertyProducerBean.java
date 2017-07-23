@@ -57,18 +57,21 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public Boolean produceBooleanProperty(InjectionPoint injectionPoint) {
+        Boolean property = null;
+
         try {
             final String value = getProperty(injectionPoint);
 
             if (value != null) {
-                return Boolean.valueOf(value);
+                property = Boolean.valueOf(value);
+            } else if (boolean.class.equals(injectionPoint.getType())) {
+                property = Boolean.FALSE;
             }
-
-            final Type type = injectionPoint.getType();
-            return type.equals(boolean.class) ? Boolean.FALSE : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
+
+        return property;
     }
 
     @Produces

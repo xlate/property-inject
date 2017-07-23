@@ -234,8 +234,8 @@ public class PropertyFactoryTest {
         });
         final String resourceName = "file:////tmp/does-not-exist.properties";
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
-        final String propertyName = null;
-        final String defaultValue = null;
+        final String propertyName = "";
+        final String defaultValue = "";
         bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
     }
 
