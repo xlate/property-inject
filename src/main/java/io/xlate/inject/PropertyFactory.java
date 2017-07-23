@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +37,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 class PropertyFactory {
 
+    private final static Logger logger = Logger.getLogger(PropertyFactory.class.getName());
     final Map<String, Properties> propertiesCache;
 
     PropertyFactory() {
@@ -156,6 +159,10 @@ class PropertyFactory {
             };
         } else {
             resources = loader.getResources(resourceName);
+        }
+
+        if (!resources.hasMoreElements()) {
+            logger.log(Level.WARNING, "Resource not found by name {0}", resourceName);
         }
 
         return resources;

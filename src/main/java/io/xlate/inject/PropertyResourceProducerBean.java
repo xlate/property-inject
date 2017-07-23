@@ -22,6 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 @ApplicationScoped
@@ -36,22 +37,25 @@ public class PropertyResourceProducerBean {
     @Dependent
     @PropertyResource
     public Properties produceProperties(InjectionPoint point) {
-        final Property annotation = point.getAnnotated().getAnnotation(Property.class);
-        final Class<?> beanType = point.getBean().getBeanClass();
-        final ClassLoader loader = beanType.getClassLoader();
+        final Annotated annotated = point.getAnnotated();
 
-        @SuppressWarnings("deprecation")
-        String resourceName = annotation.resourceName();
-
-        if (resourceName == null || resourceName.isEmpty()) {
-            resourceName = beanType.getName().replace('.', '/') + ".properties";
+        if (point.getType() != Properties.class) {
+            throw new InjectionException(Properties.class + " can not be injected to type " + point.getType());
         }
 
-        @SuppressWarnings("deprecation")
-        PropertyResourceFormat format = annotation.resourceFormat();
+        final Class<?> beanType = point.getBean().getBeanClass();
+        final ClassLoader loader = beanType.getClassLoader();
+        final PropertyResource annotation = annotated.getAnnotation(PropertyResource.class);
+        final PropertyResourceFormat format = annotation.format();
+
+        String locator = annotation.url();
+
+        if (locator.isEmpty()) {
+            locator = beanType.getName().replace('.', '/') + ".properties";
+        }
 
         try {
-            return factory.getProperties(loader, resourceName, format);
+            return factory.getProperties(loader, locator, format);
         } catch (Exception e) {
             throw new InjectionException(e);
         }
