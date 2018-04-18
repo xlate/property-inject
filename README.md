@@ -1,4 +1,4 @@
-# property-inject [![Build Status](https://travis-ci.org/xlate/property-inject.svg?branch=master)](https://travis-ci.org/xlate/property-inject)
+# property-inject [![Build Status](https://travis-ci.org/xlate/property-inject.svg?branch=master)](https://travis-ci.org/xlate/property-inject) [![Coverage Status](https://coveralls.io/repos/github/xlate/property-inject/badge.svg?branch=master)](https://coveralls.io/github/xlate/property-inject?branch=master)
 Simple CDI extension to support injection of java.util.Properties values
 
 ## Maven Configuration
