@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -48,46 +48,30 @@ public @interface Property {
     @Nonbinding
     public String name() default "";
 
-    // TODO: JavaDoc
+    // TODO: JavaDoc - used for BigDecimal and Date parsing
     @Nonbinding
     public String pattern() default "";
 
-    // TODO: JavaDoc
-    @Nonbinding
-    public PropertyResource resource() default @PropertyResource;
-
     /**
-     * The name of the file or resource on the class path where the property
-     * give by {@link #name} can be found. E.g. MyProperties.properties. If left
-     * unspecified, the property injection processor will search for a
-     * properties file having the same path and name as the class where this
-     * {@link Property} annotation is defined.
+     * The {@link io.xlate.inject.PropertyResource} specifying the location
+     * where the property given by {@link #name} can be found and the format of
+     * that file. E.g. classpath:MyProperties.properties or
+     * http://example.com/properties.xml. If left unspecified, the property
+     * injection processor will search for a properties file on the class path
+     * having the same path and name as the class where this {@link Property}
+     * annotation is defined.
      *
      * Note that if the property is first found in
      * {@link java.lang.System#getProperties} (using the default name or as
      * provided in the {@link #systemProperty} parameter), it will take
      * precedence over a named property.
      *
-     * @deprecated use {@link #resource} instead
-     *
-     * @return the resource name on the class path containing the property
+     * @return the {@link io.xlate.inject.PropertyResource} specifying the
+     *         location and format of the properties collection containing the
+     *         property named by {@link #name}
      */
     @Nonbinding
-    @Deprecated
-    public String resourceName() default "";
-
-    /**
-     * The format of the resource named by {@link #resourceName}. Supported
-     * formats are XML and Properties (key/value pairs).
-     *
-     * @deprecated use {@link #resource} instead
-     *
-     * @return the <code>PropertyResourceFormat</code> of the Properties
-     *         resource
-     */
-    @Nonbinding
-    @Deprecated
-    public PropertyResourceFormat resourceFormat() default PropertyResourceFormat.PROPERTIES;
+    public PropertyResource resource() default @PropertyResource;
 
     /**
      * The name of the property to be found in

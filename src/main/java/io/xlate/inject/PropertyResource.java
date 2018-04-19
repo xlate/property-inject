@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -29,16 +29,16 @@ import javax.inject.Qualifier;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PropertyResource {
     /**
-     * The name of the file or resource on the class path where the property
-     * give by {@link #name} can be found. E.g. MyProperties.properties. If left
-     * unspecified, the property injection processor will search for a
-     * properties file having the same path and name as the class where this
-     * {@link PropertyResource} annotation is defined.
+     * The URL specifying the location of a resource in properties format. If
+     * left unspecified, the property injection processor will search for a
+     * properties file on the class path having the same name as the class where
+     * this {@link PropertyResource} annotation is defined, including package
+     * name. If no protocol is specified, the class path will be searched.
      *
-     * @return the resource name on the class path containing the property
+     * @return URL specifying the location of resource(s) in properties format
      */
     @Nonbinding
-    public String url() default "";
+    public String value() default "";
 
     /**
      * The format of the resource named by {@link #resourceName}. Supported

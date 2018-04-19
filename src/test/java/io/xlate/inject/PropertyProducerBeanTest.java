@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -42,14 +43,23 @@ import javax.json.Json;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PropertyProducerBeanTest {
 
     private PropertyProducerBean bean;
 
+    @Mock
+    PropertyResource defaultPropertyResource;
+
     @Before
     public void setup() {
         bean = new PropertyProducerBean();
+        when(defaultPropertyResource.value()).thenReturn("");
+        when(defaultPropertyResource.format()).thenReturn(PropertyResourceFormat.PROPERTIES);
     }
 
     private Property mockProperty(String name,
@@ -60,7 +70,6 @@ public class PropertyProducerBeanTest {
         return mockProperty(name, "", resourceName, resourceFormat, systemProperty, defaultValue, false);
     }
 
-    @SuppressWarnings("deprecation")
     private Property mockProperty(String name,
                                   String pattern,
                                   String resourceName,
@@ -71,11 +80,13 @@ public class PropertyProducerBeanTest {
         Property property = mock(Property.class);
         when(property.name()).thenReturn(name);
         when(property.pattern()).thenReturn(pattern);
-        when(property.resourceName()).thenReturn(resourceName);
-        when(property.resourceFormat()).thenReturn(resourceFormat);
         when(property.systemProperty()).thenReturn(systemProperty);
         when(property.defaultValue()).thenReturn(defaultValue);
         when(property.resolveEnvironment()).thenReturn(resolveEnvironment);
+
+        when(defaultPropertyResource.value()).thenReturn(resourceName);
+        when(defaultPropertyResource.format()).thenReturn(resourceFormat);
+        when(property.resource()).thenReturn(this.defaultPropertyResource);
         return property;
     }
 
@@ -120,9 +131,77 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, String.class, Member.class, "testGetPropertyForFieldMember", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMember",
+                                                       -1);
         String result = bean.getProperty(point);
         assertEquals("testGetPropertyForFieldMemberValue", result);
+    }
+
+    @Test
+    public void testGetPropertyForFieldMemberUsingFileUrl() throws Exception {
+        Property property = this.mockProperty("testGetPropertyForFieldMemberUsingFileUrl",
+                                              new File("target/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties").toURI()
+                                                                                                                                 .toURL()
+                                                                                                                                 .toString(),
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMemberUsingFileUrl",
+                                                       -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberUsingFileUrlValue", result);
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testGetPropertyUsingInvalidUri() throws Exception {
+        Property property = this.mockProperty("irrelevant",
+                                              "\n\n\n",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "irrelevant",
+                                                       -1);
+        bean.getProperty(point);
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testGetPropertyUsingMalformedUrl() throws Exception {
+        Property property = this.mockProperty("irrelevant",
+                                              "unexpected://not/relevant/when/protocol/unknown.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "irrelevant",
+                                                       -1);
+        bean.getProperty(point);
+    }
+
+    @Test
+    public void testGetPropertyForFieldMemberWithClasspathProtocol() throws Exception {
+        Property property = this.mockProperty("testGetPropertyForFieldMemberWithClasspathProtocol",
+                                              "classpath:io/xlate/inject/PropertyProducerBeanTest.properties",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              "",
+                                              Property.DEFAULT_NULL);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMemberWithClasspathProtocol",
+                                                       -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberWithClasspathProtocolValue", result);
     }
 
     @Test
@@ -133,7 +212,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testGetSystemPropertyForFieldMember", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testGetSystemPropertyForFieldMember",
+                                                       -1);
         System.setProperty("io.xlate.inject.PropertyProducerBeanTest.testGetSystemPropertyForFieldMember", "val123");
         String result = bean.getProperty(point);
         assertEquals("val123", result);
@@ -147,35 +229,28 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithDefaultResourceName", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMemberWithDefaultResourceName",
+                                                       -1);
         String result = bean.getProperty(point);
         assertEquals("testGetPropertyForFieldMemberWithDefaultResourceNameValue", result);
-    }
-
-    @Test
-    public void testGetPropertyForFieldMemberWithNullResourceName() throws Exception {
-        Property property = this.mockProperty("",
-                                              null,
-                                              PropertyResourceFormat.PROPERTIES,
-                                              "",
-                                              Property.DEFAULT_NULL);
-        InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithNullResourceName", -1);
-        String result = bean.getProperty(point);
-        assertEquals("testGetPropertyForFieldMemberWithNullResourceNameValue", result);
     }
 
     @Test
     public void testGetPropertyForFieldMemberWithEnvReplacement() throws Exception {
         Property property = this.mockProperty("",
                                               "",
-                                              null,
+                                              "",
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL,
                                               true);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testGetPropertyForFieldMemberWithEnvReplacement", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMemberWithEnvReplacement",
+                                                       -1);
         String result = bean.getProperty(point);
         assertEquals("testGetPropertyForFieldMemberWithEnvReplacementValue" + System.getenv("INJECTED_VARIABLE"),
                      result);
@@ -247,7 +322,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.XML,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, int.class, Member.class, "testProducePropertyNativeBoolean", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       int.class,
+                                                       Member.class,
+                                                       "testProducePropertyNativeBoolean",
+                                                       -1);
         assertEquals(true, (boolean) bean.produceBooleanProperty(point));
     }
 
@@ -304,7 +383,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, int.class, Member.class, "testProducePropertyInteger", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       int.class,
+                                                       Member.class,
+                                                       "testProducePropertyInteger",
+                                                       -1);
         assertEquals(42, (int) bean.produceIntegerProperty(point));
     }
 
@@ -327,7 +410,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Long.class, Member.class, "testProducePropertyLong", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       Long.class,
+                                                       Member.class,
+                                                       "testProducePropertyLong",
+                                                       -1);
         assertEquals(Long.valueOf(42), bean.produceLongProperty(point));
     }
 
@@ -349,7 +436,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, Long.class, Member.class, "testProducePropertyLongInvalid", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       Long.class,
+                                                       Member.class,
+                                                       "testProducePropertyLongInvalid",
+                                                       -1);
         bean.produceLongProperty(point);
     }
 
@@ -361,7 +452,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, long.class, Member.class, "testProducePropertyLong", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       long.class,
+                                                       Member.class,
+                                                       "testProducePropertyLong",
+                                                       -1);
         assertEquals(42L, (long) bean.produceLongProperty(point));
     }
 
@@ -441,7 +536,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, float.class, Member.class, "testProducePropertyDouble", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       float.class,
+                                                       Member.class,
+                                                       "testProducePropertyDouble",
+                                                       -1);
         assertEquals(Double.valueOf(42.0d), bean.produceDoubleProperty(point));
     }
 
@@ -475,7 +574,11 @@ public class PropertyProducerBeanTest {
                                               PropertyResourceFormat.PROPERTIES,
                                               "",
                                               Property.DEFAULT_NULL);
-        InjectionPoint point = this.mockInjectionPoint(property, double.class, Member.class, "testProducePropertyDouble", -1);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       double.class,
+                                                       Member.class,
+                                                       "testProducePropertyDouble",
+                                                       -1);
         assertEquals(42.0d, bean.produceDoubleProperty(point), 0.0d);
     }
 
@@ -534,7 +637,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testProducePropertyBigDecimalInvalid", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testProducePropertyBigDecimalInvalid",
+                                                       -1);
         bean.produceBigDecimalProperty(point);
     }
 
@@ -556,10 +662,14 @@ public class PropertyProducerBeanTest {
             public void publish(LogRecord record) {
                 messages.add(record.getMessage());
             }
+
             @Override
-            public void flush() {}
+            public void flush() {
+            }
+
             @Override
-            public void close() throws SecurityException {}
+            public void close() throws SecurityException {
+            }
         };
         extLogger.addHandler(handler);
         assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), 0f);
@@ -624,7 +734,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testProducePropertyBigIntegerInvalid", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testProducePropertyBigIntegerInvalid",
+                                                       -1);
         bean.produceBigIntegerProperty(point);
     }
 
@@ -637,7 +750,8 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDateProperty", -1);
-        assertEquals(LocalDateTime.parse("2017-07-01T23:45:16.432").atZone(ZoneId.of("-0400")).toInstant().toEpochMilli(),
+        assertEquals(LocalDateTime.parse("2017-07-01T23:45:16.432").atZone(ZoneId.of("-0400")).toInstant()
+                                  .toEpochMilli(),
                      bean.produceDateProperty(point).getTime());
     }
 
@@ -651,7 +765,8 @@ public class PropertyProducerBeanTest {
                                               Property.DEFAULT_NULL,
                                               false);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDatePropertyPattern", -1);
-        assertEquals(LocalDateTime.parse("2017-07-01T07:45:16.432").atZone(ZoneId.of("-0400")).toInstant().toEpochMilli(),
+        assertEquals(LocalDateTime.parse("2017-07-01T07:45:16.432").atZone(ZoneId.of("-0400")).toInstant()
+                                  .toEpochMilli(),
                      bean.produceDateProperty(point).getTime());
     }
 
@@ -708,7 +823,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testProducePropertyJsonArrayInvalid", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testProducePropertyJsonArrayInvalid",
+                                                       -1);
         bean.produceJsonArrayProperty(point);
     }
 
@@ -722,13 +840,13 @@ public class PropertyProducerBeanTest {
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyJsonObject", -1);
         assertEquals(Json.createObjectBuilder()
-                .add("key1", "value1")
-                .add("key2", 42f)
-                .add("key3",
-                     Json.createArrayBuilder()
-                             .add("elem1")
-                             .add("elem2"))
-                .build(),
+                         .add("key1", "value1")
+                         .add("key2", 42f)
+                         .add("key3",
+                              Json.createArrayBuilder()
+                                  .add("elem1")
+                                  .add("elem2"))
+                         .build(),
                      bean.produceJsonObjectProperty(point));
     }
 
@@ -751,7 +869,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this
-                .mockInjectionPoint(property, Member.class, "testProducePropertyJsonObjectInvalid", -1);
+                                   .mockInjectionPoint(property,
+                                                       Member.class,
+                                                       "testProducePropertyJsonObjectInvalid",
+                                                       -1);
         bean.produceJsonObjectProperty(point);
     }
 

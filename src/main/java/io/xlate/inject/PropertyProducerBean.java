@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -20,6 +20,10 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLStreamHandler;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -257,21 +261,44 @@ public class PropertyProducerBean {
             return systemProperty;
         }
 
-        @SuppressWarnings("deprecation")
-        String resourceName = annotation.resourceName();
+        final PropertyResource resource = annotation.resource();
+        final String location = resource.value();
+        final URLStreamHandler handler = new ClasspathURLStreamHandler(loader);
+        final String value;
+        final URL resourceUrl;
 
-        if (resourceName == null || resourceName.isEmpty()) {
-            resourceName = beanType.getName().replace('.', '/') + ".properties";
+        if (location.isEmpty()) {
+            StringBuilder resourceName = new StringBuilder();
+            resourceName.append("classpath:");
+            resourceName.append(beanType.getName().replace('.', '/'));
+            resourceName.append(".properties");
+
+            resourceUrl = new URL(null, resourceName.toString(), handler);
+        } else {
+            try {
+                final URI resourceId = URI.create(location);
+                final String scheme = resourceId.getScheme();
+
+                if (scheme != null) {
+                    if ("classpath".equals(scheme)) {
+                        resourceUrl = new URL(null, location, handler);
+                    } else {
+                        resourceUrl = resourceId.toURL();
+                    }
+                } else {
+                    resourceUrl = new URL(null, "classpath:" + location, handler);
+                }
+            } catch (IllegalArgumentException | MalformedURLException e) {
+                throw new InjectionException(e);
+            }
         }
 
-        @SuppressWarnings("deprecation")
-        PropertyResourceFormat format = annotation.resourceFormat();
-
-        final String value = factory.getProperty(loader, resourceName, format, propertyName, defaultValue);
+        value = factory.getProperty(resourceUrl, resource.format(), propertyName, defaultValue);
 
         if (value != null && annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);
         }
+
         return value;
     }
 }

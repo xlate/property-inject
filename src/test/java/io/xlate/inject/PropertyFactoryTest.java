@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -38,16 +38,24 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PropertyFactoryTest {
     private PropertyFactory bean;
+
+    @Mock
+    PropertyResource defaultPropertyResource;
 
     @Before
     public void setup() {
         bean = new PropertyFactory();
+        when(defaultPropertyResource.value()).thenReturn("");
+        when(defaultPropertyResource.format()).thenReturn(PropertyResourceFormat.PROPERTIES);
     }
 
-    @SuppressWarnings("deprecation")
     private Property mockProperty(String name,
                                   String resourceName,
                                   PropertyResourceFormat resourceFormat,
@@ -55,10 +63,12 @@ public class PropertyFactoryTest {
                                   String defaultValue) {
         Property property = mock(Property.class);
         when(property.name()).thenReturn(name);
-        when(property.resourceName()).thenReturn(resourceName);
-        when(property.resourceFormat()).thenReturn(resourceFormat);
         when(property.systemProperty()).thenReturn(systemProperty);
         when(property.defaultValue()).thenReturn(defaultValue);
+
+        when(defaultPropertyResource.value()).thenReturn(resourceName);
+        when(defaultPropertyResource.format()).thenReturn(resourceFormat);
+        when(property.resource()).thenReturn(this.defaultPropertyResource);
         return property;
     }
 
@@ -225,6 +235,19 @@ public class PropertyFactoryTest {
         String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
         assertEquals("testGetPropertyCachedWithoutClassLoaderValue", output);
         String output2 = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        assertEquals(output, output2);
+    }
+
+    @Test
+    public void testGetPropertyUrlCachedFromClassPath() throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.properties", new ClasspathURLStreamHandler(classLoader));
+        final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
+        final String propertyName = "testGetPropertyUrlFromClassPath";
+        final String defaultValue = "DEFAULT";
+        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        assertEquals("testGetPropertyUrlFromClassPathValue", output);
+        String output2 = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
         assertEquals(output, output2);
     }
 

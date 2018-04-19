@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -83,6 +83,39 @@ class PropertyFactory {
         return getProperty(System.getProperties(), lookupProperty, Property.DEFAULT_NULL);
     }
 
+    String getProperty(final URL resourceUrl,
+                       final PropertyResourceFormat format,
+                       final String propertyName,
+                       final String defaultValue) throws IOException {
+
+        final Properties properties = getProperties(resourceUrl, format);
+        return getProperty(properties, propertyName, defaultValue);
+    }
+
+    Properties getProperties(final URL resourceUrl,
+                             final PropertyResourceFormat format) throws IOException {
+
+        final Properties properties;
+        final String resourceId = resourceUrl.toString();
+
+        if (propertiesCache.containsKey(resourceId)) {
+            properties = propertiesCache.get(resourceId);
+        } else {
+            properties = new Properties();
+            propertiesCache.put(resourceId, properties);
+
+            try (InputStream resourceStream = resourceUrl.openStream()) {
+                if (PropertyResourceFormat.XML == format) {
+                    properties.loadFromXML(resourceStream);
+                } else {
+                    properties.load(resourceStream);
+                }
+            }
+        }
+
+        return properties;
+    }
+
     String getProperty(final ClassLoader classLoader,
                        final String resourceName,
                        final PropertyResourceFormat format,
@@ -97,13 +130,14 @@ class PropertyFactory {
                              final String resourceName,
                              final PropertyResourceFormat format) throws IOException {
 
+        final String resourceId = "classpath:" + resourceName;
         final Properties properties;
 
-        if (propertiesCache.containsKey(resourceName)) {
-            properties = propertiesCache.get(resourceName);
+        if (propertiesCache.containsKey(resourceId)) {
+            properties = propertiesCache.get(resourceId);
         } else {
             properties = new Properties();
-            propertiesCache.put(resourceName, properties);
+            propertiesCache.put(resourceId, properties);
 
             final ClassLoader loader;
 
@@ -117,16 +151,13 @@ class PropertyFactory {
 
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
-                InputStream resourceStream = resource.openStream();
 
-                try {
+                try (InputStream resourceStream = resource.openStream()) {
                     if (PropertyResourceFormat.XML == format) {
                         properties.loadFromXML(resourceStream);
                     } else {
                         properties.load(resourceStream);
                     }
-                } finally {
-                    resourceStream.close();
                 }
             }
         }
