@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.xlate</groupId>
 	<artifactId>property-inject</artifactId>
@@ -127,12 +129,33 @@
 					<environmentVariables>
 						<INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
 						<STRING7>string7value.env</STRING7>
+						<RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+                        <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
 					</environmentVariables>
 					<systemProperties>
 						<java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
 						<string6.property.name>string6value.system</string6.property.name>
 					</systemProperties>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.15</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

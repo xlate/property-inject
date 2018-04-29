@@ -86,8 +86,20 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
     }
 
     @Test
-    public void testProducePropertiesUrl() {
+    public void testProducePropertiesUrlNoScheme() {
         PropertyResource annotation = annotation("io/xlate/inject/test/testProducePropertiesUrl.properties",
+                                                 PropertyResourceFormat.PROPERTIES,
+                                                 false);
+        InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
+        Properties result = bean.produceProperties(point);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals("true", result.getProperty("url.result"));
+    }
+
+    @Test
+    public void testProducePropertiesUrlWithScheme() {
+        PropertyResource annotation = annotation("classpath:io/xlate/inject/test/testProducePropertiesUrl.properties",
                                                  PropertyResourceFormat.PROPERTIES,
                                                  false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
@@ -106,4 +118,14 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
         bean.produceProperties(point);
     }
 
+    @Test
+    public void testEnvironmentVarForResourceLocation() {
+        PropertyResource annotation = annotation("${env.RESOURCE_LOC1}",
+                                                 PropertyResourceFormat.PROPERTIES,
+                                                 true);
+        InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
+        Properties result = bean.produceProperties(point);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(3, result.size());
+    }
 }

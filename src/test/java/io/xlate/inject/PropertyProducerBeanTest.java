@@ -77,6 +77,18 @@ public class PropertyProducerBeanTest {
                                   String systemProperty,
                                   String defaultValue,
                                   boolean resolveEnvironment) {
+
+        return mockProperty(name, pattern, resourceName, resourceFormat, false, systemProperty, defaultValue, resolveEnvironment);
+    }
+
+    private Property mockProperty(String name,
+                                  String pattern,
+                                  String resourceName,
+                                  PropertyResourceFormat resourceFormat,
+                                  boolean resolveResourceEnvironment,
+                                  String systemProperty,
+                                  String defaultValue,
+                                  boolean resolveEnvironment) {
         Property property = mock(Property.class);
         when(property.name()).thenReturn(name);
         when(property.pattern()).thenReturn(pattern);
@@ -86,6 +98,8 @@ public class PropertyProducerBeanTest {
 
         when(defaultPropertyResource.value()).thenReturn(resourceName);
         when(defaultPropertyResource.format()).thenReturn(resourceFormat);
+        when(defaultPropertyResource.resolveEnvironment()).thenReturn(resolveResourceEnvironment);
+
         when(property.resource()).thenReturn(this.defaultPropertyResource);
         return property;
     }
@@ -202,6 +216,25 @@ public class PropertyProducerBeanTest {
                                                        -1);
         String result = bean.getProperty(point);
         assertEquals("testGetPropertyForFieldMemberWithClasspathProtocolValue", result);
+    }
+
+    @Test
+    public void testGetPropertyForFieldMemberWithResourceEnvResolution() throws Exception {
+        Property property = this.mockProperty("testGetPropertyForFieldMemberWithResourceEnvResolution",
+                                              "",
+                                              "${env.RESOURCE_LOC0}",
+                                              PropertyResourceFormat.PROPERTIES,
+                                              true,
+                                              "",
+                                              Property.DEFAULT_NULL,
+                                              true);
+        InjectionPoint point = this.mockInjectionPoint(property,
+                                                       String.class,
+                                                       Member.class,
+                                                       "testGetPropertyForFieldMemberWithResourceEnvResolution",
+                                                       -1);
+        String result = bean.getProperty(point);
+        assertEquals("testGetPropertyForFieldMemberWithResourceEnvResolutionValue", result);
     }
 
     @Test

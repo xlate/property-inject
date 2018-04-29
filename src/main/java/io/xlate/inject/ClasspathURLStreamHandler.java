@@ -5,6 +5,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
+import javax.enterprise.inject.InjectionException;
+
 class ClasspathURLStreamHandler extends URLStreamHandler {
     /** The classloader to find resources from. */
     private final ClassLoader classLoader;
@@ -14,8 +16,18 @@ class ClasspathURLStreamHandler extends URLStreamHandler {
     }
 
     @Override
-    protected URLConnection openConnection(URL u) throws IOException {
-        final URL resourceUrl = classLoader.getResource(u.getPath());
-        return resourceUrl.openConnection();
+    protected URLConnection openConnection(URL u) {
+        final String resourcePath = u.getPath();
+        final URL resourceUrl = classLoader.getResource(resourcePath);
+
+        if (resourceUrl == null) {
+            throw new InjectionException("Class-path resource not found: " + resourcePath);
+        }
+
+        try {
+            return resourceUrl.openConnection();
+        } catch (IOException e) {
+            throw new InjectionException(e);
+        }
     }
 }

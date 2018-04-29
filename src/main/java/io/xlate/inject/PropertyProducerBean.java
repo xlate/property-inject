@@ -275,13 +275,21 @@ public class PropertyProducerBean {
 
             resourceUrl = new URL(null, resourceName.toString(), handler);
         } else {
+            final String resolvedLocation;
+
+            if (resource.resolveEnvironment()) {
+                resolvedLocation = factory.replaceEnvironmentReferences(location);
+            } else {
+                resolvedLocation = location;
+            }
+
             try {
-                final URI resourceId = URI.create(location);
+                final URI resourceId = URI.create(resolvedLocation);
                 final String scheme = resourceId.getScheme();
 
                 if (scheme != null) {
                     if ("classpath".equals(scheme)) {
-                        resourceUrl = new URL(null, location, handler);
+                        resourceUrl = new URL(null, resolvedLocation, handler);
                     } else {
                         resourceUrl = resourceId.toURL();
                     }

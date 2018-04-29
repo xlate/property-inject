@@ -17,19 +17,14 @@
 package io.xlate.inject;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import javax.enterprise.inject.spi.AnnotatedParameter;
@@ -165,77 +160,52 @@ public class PropertyFactoryTest {
     @Test
     public void testGetPropertyWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final String resourceName = "io/xlate/inject/test/test.properties";
+        final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
         assertEquals("testGetPropertyWithClassLoaderValue", output);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    /*@Test(expected = NoSuchElementException.class)
     public void testGetResourcesForceNoSuchElement() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         Enumeration<URL> result = bean.getResources(classLoader, "file:/dev/null");
         assertNotNull(result.nextElement());
         result.nextElement();
-    }
+    }*/
 
     @Test
-    public void testGetPropertyFromFileWithClassLoader() throws IOException {
-        final ClassLoader classLoader = getClass().getClassLoader();
-        final String resourceName = new java.io.File("target/test-classes/io/xlate/inject/test/test.properties").toURI().toURL().toString();
+    public void testGetPropertyFromFile() throws IOException {
+        final URL resourceUrl = new URL(null, "file:target/test-classes/io/xlate/inject/test/test.properties");
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
         assertEquals("testGetPropertyWithClassLoaderValue", output);
     }
 
     @Test
     public void testGetPropertyFromXmlWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final String resourceName = "io/xlate/inject/test/test.xml";
+        final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.xml", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.XML;
         final String propertyName = "testGetPropertyFromXmlWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
         assertEquals("testGetPropertyFromXmlWithClassLoaderValue", output);
     }
 
-    @Test
-    public void testGetPropertyFromXmlWithoutClassLoader() throws IOException {
-        final ClassLoader classLoader = null;
-        final String resourceName = "io/xlate/inject/test/test.xml";
-        final PropertyResourceFormat format = PropertyResourceFormat.XML;
-        final String propertyName = "testGetPropertyFromXmlWithoutClassLoader";
-        final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
-        assertEquals("testGetPropertyFromXmlWithoutClassLoaderValue", output);
-    }
-
-    @Test
+    @Test(expected = javax.enterprise.inject.InjectionException.class)
     public void testGetPropertyMissingResourceWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final String resourceName = "io/xlate/inject/test/missing.properties";
+        final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/missing.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "";
         final String defaultValue = Property.DEFAULT_NULL;
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
         assertNull(output);
-    }
-
-    @Test
-    public void testGetPropertyCachedWithoutClassLoader() throws IOException {
-        final ClassLoader classLoader = null;
-        final String resourceName = "io/xlate/inject/test/test.properties";
-        final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
-        final String propertyName = "testGetPropertyCachedWithoutClassLoader";
-        final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
-        assertEquals("testGetPropertyCachedWithoutClassLoaderValue", output);
-        String output2 = bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
-        assertEquals(output, output2);
     }
 
     @Test
@@ -253,29 +223,11 @@ public class PropertyFactoryTest {
 
     @Test(expected = java.io.FileNotFoundException.class)
     public void testGetPropertyNullOpenStream() throws IOException {
-        final ClassLoader classLoader = mock(ClassLoader.class);
-        when(classLoader.getResources(any(String.class))).thenReturn(new Enumeration<URL>() {
-            int i = 0;
-            @Override
-            public boolean hasMoreElements() {
-                return ++i == 1;
-            }
-            @Override
-            public URL nextElement() {
-                try {
-                    return new URL("file:////tmp/does-not-exist.properties");
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-        });
-        final String resourceName = "file:////tmp/does-not-exist.properties";
+        final URL resourceUrl = new URL(null, "file:////tmp/does-not-exist.properties");
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "";
         final String defaultValue = "";
-        bean.getProperty(classLoader, resourceName, format, propertyName, defaultValue);
+        bean.getProperty(resourceUrl, format, propertyName, defaultValue);
     }
 
     @Test

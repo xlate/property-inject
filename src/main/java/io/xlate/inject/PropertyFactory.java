@@ -20,14 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
-import java.net.URI;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,7 +112,7 @@ class PropertyFactory {
         return properties;
     }
 
-    String getProperty(final ClassLoader classLoader,
+    /*String getProperty(final ClassLoader classLoader,
                        final String resourceName,
                        final PropertyResourceFormat format,
                        final String propertyName,
@@ -198,7 +194,7 @@ class PropertyFactory {
         }
 
         return resources;
-    }
+    }*/
 
     String getProperty(final Properties properties, final String propertyName, final String defaultValue) {
         final String value;
