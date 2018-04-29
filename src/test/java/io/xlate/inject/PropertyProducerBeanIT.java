@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(PropertyInjectionExtension.class)
-public class PropertyProducerBeanCdiTest {
+public class PropertyProducerBeanIT {
 
     @Inject @Property
     String string1;

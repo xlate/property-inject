@@ -30,14 +30,14 @@ import org.junit.runner.RunWith;
 
 @RunWith(CdiRunner.class)
 @AdditionalClasses(PropertyInjectionExtension.class)
-public class PropertyResourceProducerBeanCdiTest {
+public class PropertyResourceProducerBeanIT {
 
     @Inject
     @PropertyResource
     Properties defaultProps;
 
     @Inject
-    @PropertyResource("io/xlate/inject/PropertyResourceProducerBeanCdiTest2.properties")
+    @PropertyResource("io/xlate/inject/PropertyResourceProducerBeanIT2.properties")
     Properties props2;
 
     @Test

@@ -142,6 +142,18 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.15</version>
+                <configuration>
+                    <environmentVariables>
+                        <INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
+                        <STRING7>string7value.env</STRING7>
+                        <RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+                        <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
+                    </environmentVariables>
+                    <systemProperties>
+                        <java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+                        <string6.property.name>string6value.system</string6.property.name>
+                    </systemProperties>
+                </configuration>
 				<executions>
 					<execution>
 						<id>integration-test</id>
