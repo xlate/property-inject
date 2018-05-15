@@ -16,35 +16,43 @@
  ******************************************************************************/
 package io.xlate.inject;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.net.URL;
 import java.util.Properties;
 
+import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PropertyFactoryTest {
     private PropertyFactory bean;
 
     @Mock
     PropertyResource defaultPropertyResource;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bean = new PropertyFactory();
         when(defaultPropertyResource.value()).thenReturn("");
@@ -197,15 +205,20 @@ public class PropertyFactoryTest {
         assertEquals("testGetPropertyFromXmlWithClassLoaderValue", output);
     }
 
-    @Test(expected = javax.enterprise.inject.InjectionException.class)
+    @Test
     public void testGetPropertyMissingResourceWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/missing.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "";
         final String defaultValue = Property.DEFAULT_NULL;
-        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
-        assertNull(output);
+
+        @SuppressWarnings("unused")
+		InjectionException ex = assertThrows(InjectionException.class, () -> {
+        	bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        });
+
+        //assertEquals("At least one DateFormat pattern must be provided.", ex.getMessage());
     }
 
     @Test
@@ -221,13 +234,17 @@ public class PropertyFactoryTest {
         assertEquals(output, output2);
     }
 
-    @Test(expected = java.io.FileNotFoundException.class)
+    @Test
     public void testGetPropertyNullOpenStream() throws IOException {
         final URL resourceUrl = new URL(null, "file:////tmp/does-not-exist.properties");
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "";
         final String defaultValue = "";
-        bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+
+        @SuppressWarnings("unused")
+		FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
+            bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        });
     }
 
     @Test

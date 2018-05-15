@@ -16,21 +16,29 @@
  ******************************************************************************/
 package io.xlate.inject;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Properties;
 
 import javax.inject.Inject;
 
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.CdiRunner;
-import org.junit.Test;
+import org.jboss.weld.junit5.WeldInitiator;
+import org.jboss.weld.junit5.WeldJunit5Extension;
+import org.jboss.weld.junit5.WeldSetup;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-@RunWith(CdiRunner.class)
-@AdditionalClasses(PropertyInjectionExtension.class)
+@RunWith(JUnitPlatform.class)
+@ExtendWith(WeldJunit5Extension.class)
 public class PropertyResourceProducerBeanIT {
+
+	@WeldSetup
+	public WeldInitiator weld = WeldInitiator
+		.from(PropertyResourceProducerBean.class)
+		.build();
 
     @Inject
     @PropertyResource

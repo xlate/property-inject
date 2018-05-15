@@ -16,8 +16,9 @@
  ******************************************************************************/
 package io.xlate.inject;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,17 +38,22 @@ import java.util.logging.Logger;
 
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
-import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.json.Json;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnitPlatform.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PropertyProducerBeanTest {
 
     private PropertyProducerBean bean;
@@ -55,7 +61,7 @@ public class PropertyProducerBeanTest {
     @Mock
     PropertyResource defaultPropertyResource;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bean = new PropertyProducerBean();
         when(defaultPropertyResource.value()).thenReturn("");
@@ -125,9 +131,13 @@ public class PropertyProducerBeanTest {
         when(member.getName()).thenReturn(memberName);
 
         @SuppressWarnings("rawtypes")
-        Bean mockBean = mock(Bean.class);
-        when(injectionPoint.getBean()).thenReturn(mockBean);
-        when(mockBean.getBeanClass()).thenReturn(getClass());
+		Class declaringClass = getClass();
+        when(member.getDeclaringClass()).thenReturn(declaringClass);
+
+        //@SuppressWarnings("rawtypes")
+        //Bean mockBean = mock(Bean.class);
+        //when(injectionPoint.getBean()).thenReturn(mockBean);
+        //when(mockBean.getBeanClass()).thenReturn(getClass());
 
         AnnotatedParameter<?> annotated = mock(AnnotatedParameter.class);
         when(annotated.getPosition()).thenReturn(memberPosition);
@@ -172,7 +182,7 @@ public class PropertyProducerBeanTest {
         assertEquals("testGetPropertyForFieldMemberUsingFileUrlValue", result);
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testGetPropertyUsingInvalidUri() throws Exception {
         Property property = this.mockProperty("irrelevant",
                                               "\n\n\n",
@@ -184,10 +194,14 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "irrelevant",
                                                        -1);
-        bean.getProperty(point);
+
+        @SuppressWarnings("unused")
+		InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.getProperty(point);
+        });
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testGetPropertyUsingMalformedUrl() throws Exception {
         Property property = this.mockProperty("irrelevant",
                                               "unexpected://not/relevant/when/protocol/unknown.properties",
@@ -199,7 +213,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "irrelevant",
                                                        -1);
-        bean.getProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.getProperty(point);
+        });
     }
 
     @Test
@@ -302,7 +319,7 @@ public class PropertyProducerBeanTest {
         assertEquals("testProducePropertyStringValue", result);
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyStringInvalid() {
         Property property = this.mockProperty("testProducePropertyStringInvalid",
                                               "io/xlate/inject/Invalid.properties",
@@ -310,7 +327,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyStringInvalid", -1);
-        bean.produceProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceProperty(point);
+        });
     }
 
     /*-****************** produce Boolean *************************/
@@ -336,7 +356,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceBooleanProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyBooleanInvalid() {
         Property property = this.mockProperty("testProducePropertyBooleanInvalid",
                                               "io/xlate/inject/Invalid.properties",
@@ -344,7 +364,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyBooleanInvalid", -1);
-        bean.produceBooleanProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceBooleanProperty(point);
+        });
     }
 
     /*-****************** produce native Boolean (boolean) *************************/
@@ -397,7 +420,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceIntegerProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyIntegerInvalid() {
         Property property = this.mockProperty("testProducePropertyIntegerInvalid",
                                               "",
@@ -405,7 +428,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyIntegerInvalid", -1);
-        bean.produceIntegerProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceIntegerProperty(point);
+        });
     }
 
     /*-****************** produce native Integer (int) *************************/
@@ -462,7 +488,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceLongProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyLongInvalid() {
         Property property = this.mockProperty("testProducePropertyLongInvalid",
                                               "",
@@ -474,7 +500,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyLongInvalid",
                                                        -1);
-        bean.produceLongProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceLongProperty(point);
+        });
     }
 
     /*-****************** produce native Long (long) *************************/
@@ -527,7 +556,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceFloatProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyFloatInvalid() {
         Property property = this.mockProperty("testProducePropertyFloatInvalid",
                                               "",
@@ -535,7 +564,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyFloatInvalid", -1);
-        bean.produceFloatProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceFloatProperty(point);
+        });
     }
 
     /*-****************** produce native Float (float) *************************/
@@ -547,7 +579,7 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyFloat", -1);
-        assertEquals(42.0f, bean.produceFloatProperty(point), 0.0f);
+        assertEquals(Float.valueOf(42.0f), bean.produceFloatProperty(point));
     }
 
     @Test
@@ -558,7 +590,7 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, float.class, Member.class, "floatNull", -1);
-        assertEquals(0.0f, bean.produceFloatProperty(point), 0.0f);
+        assertEquals(Float.valueOf(0.0f), bean.produceFloatProperty(point));
     }
 
     /*-****************** produce Double *************************/
@@ -588,7 +620,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceDoubleProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyDoubleInvalid() {
         Property property = this.mockProperty("testProducePropertyDoubleInvalid",
                                               "",
@@ -596,7 +628,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProducePropertyDoubleInvalid", -1);
-        bean.produceDoubleProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceDoubleProperty(point);
+        });
     }
 
     /*-****************** produce native Double (double) *************************/
@@ -612,7 +647,7 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyDouble",
                                                        -1);
-        assertEquals(42.0d, bean.produceDoubleProperty(point), 0.0d);
+        assertEquals(Double.valueOf(42.0d), bean.produceDoubleProperty(point));
     }
 
     @Test
@@ -623,7 +658,7 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, double.class, Member.class, "DoubleNull", -1);
-        assertEquals(0.0d, bean.produceDoubleProperty(point), 0.0d);
+        assertEquals(Double.valueOf(0.0d), bean.produceDoubleProperty(point));
     }
 
     /*-****************** produce BigDecimal *************************/
@@ -659,10 +694,10 @@ public class PropertyProducerBeanTest {
                                               Property.DEFAULT_NULL,
                                               false);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "BigDecimalFormatted", -1);
-        assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), 0f);
+        assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), Float.MIN_VALUE);
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyBigDecimalInvalid() {
         Property property = this.mockProperty("testProducePropertyBigDecimalInvalid",
                                               "",
@@ -674,7 +709,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyBigDecimalInvalid",
                                                        -1);
-        bean.produceBigDecimalProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceBigDecimalProperty(point);
+        });
     }
 
     @Test
@@ -705,7 +743,7 @@ public class PropertyProducerBeanTest {
             }
         };
         extLogger.addHandler(handler);
-        assertEquals(1_950_042.999f, bean.produceBigDecimalProperty(point).floatValue(), 0f);
+        assertEquals(Float.valueOf(1_950_042.999f), bean.produceBigDecimalProperty(point).floatValue(), Float.MIN_VALUE);
         extLogger.removeHandler(handler);
         org.junit.Assert.assertEquals(0, messages.size());
     }
@@ -759,7 +797,7 @@ public class PropertyProducerBeanTest {
         assertEquals(1_950_042, bean.produceBigIntegerProperty(point).intValue());
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyBigIntegerInvalid() {
         Property property = this.mockProperty("testProducePropertyBigIntegerInvalid",
                                               "",
@@ -771,7 +809,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyBigIntegerInvalid",
                                                        -1);
-        bean.produceBigIntegerProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceBigIntegerProperty(point);
+        });
     }
 
     /*-****************** produce Date *************************/
@@ -814,7 +855,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceDateProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProduceDatePropertyInvalid() {
         Property property = this.mockProperty("testProduceDatePropertyInvalid",
                                               "",
@@ -822,7 +863,10 @@ public class PropertyProducerBeanTest {
                                               "",
                                               Property.DEFAULT_NULL);
         InjectionPoint point = this.mockInjectionPoint(property, Member.class, "testProduceDatePropertyInvalid", -1);
-        bean.produceDateProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceDateProperty(point);
+        });
     }
 
     /*-****************** produce JsonArray *************************/
@@ -848,7 +892,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceJsonArrayProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyJsonArrayInvalid() {
         Property property = this.mockProperty("testProducePropertyJsonArrayInvalid",
                                               "",
@@ -860,7 +904,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyJsonArrayInvalid",
                                                        -1);
-        bean.produceJsonArrayProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceJsonArrayProperty(point);
+        });
     }
 
     /*-****************** produce JsonObject *************************/
@@ -894,7 +941,7 @@ public class PropertyProducerBeanTest {
         assertNull(bean.produceJsonObjectProperty(point));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertyJsonObjectInvalid() {
         Property property = this.mockProperty("testProducePropertyJsonObjectInvalid",
                                               "",
@@ -906,7 +953,10 @@ public class PropertyProducerBeanTest {
                                                        Member.class,
                                                        "testProducePropertyJsonObjectInvalid",
                                                        -1);
-        bean.produceJsonObjectProperty(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceJsonObjectProperty(point);
+        });
     }
 
 }

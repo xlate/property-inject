@@ -16,6 +16,10 @@
  ******************************************************************************/
 package io.xlate.inject;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,15 +30,17 @@ import java.util.Properties;
 import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitPlatform.class)
 public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest {
 
     private PropertyResourceProducerBean bean;
 
-    @Before
+    @BeforeEach
     public void setup() {
         bean = new PropertyResourceProducerBean();
     }
@@ -69,8 +75,8 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
         PropertyResource annotation = annotation("", PropertyResourceFormat.PROPERTIES, false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
         Properties result = bean.produceProperties(point);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.size());
+        assertNotNull(result);
+        assertEquals(3, result.size());
     }
 
     @Test
@@ -83,7 +89,7 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
         } catch (Exception e) {
             message = e.getMessage();
         }
-        Assert.assertTrue(message.contains(getClass().getName()));
+        assertTrue(message.contains(getClass().getName()));
     }
 
     @Test
@@ -93,9 +99,9 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
                                                  false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
         Properties result = bean.produceProperties(point);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("true", result.getProperty("url.result"));
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("true", result.getProperty("url.result"));
     }
 
     @Test
@@ -105,18 +111,21 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
                                                  false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
         Properties result = bean.produceProperties(point);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("true", result.getProperty("url.result"));
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("true", result.getProperty("url.result"));
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertiesInvalidUrl() {
         PropertyResource annotation = annotation("nowhere://io/xlate/inject/test/does-not-exist!.properties",
                                                  PropertyResourceFormat.PROPERTIES,
                                                  false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
-        bean.produceProperties(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceProperties(point);
+        });
     }
 
     @Test
@@ -126,11 +135,11 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
                                                  true);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
         Properties result = bean.produceProperties(point);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.size());
+        assertNotNull(result);
+        assertEquals(3, result.size());
     }
 
-    @Test(expected = InjectionException.class)
+    @Test
     public void testProducePropertiesUnreadable() {
         File resource = new File("target/test-classes/io/xlate/inject/Unreadable.properties");
         resource.setReadable(false);
@@ -138,6 +147,9 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
                                                  PropertyResourceFormat.PROPERTIES,
                                                  false);
         InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
-        bean.produceProperties(point);
+        @SuppressWarnings("unused")
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
+            bean.produceProperties(point);
+        });
     }
 }

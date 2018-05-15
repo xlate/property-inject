@@ -248,7 +248,7 @@ public class PropertyProducerBean {
 
     String getProperty(InjectionPoint point) throws Exception {
         final Property annotation = point.getAnnotated().getAnnotation(Property.class);
-        final Class<?> beanType = point.getBean().getBeanClass();
+        final Class<?> beanType = point.getMember().getDeclaringClass(); //point.getBean().getBeanClass();
         final ClassLoader loader = beanType.getClassLoader();
         final String propertyName = factory.getPropertyName(point, annotation.name());
         final String defaultValue = annotation.defaultValue();

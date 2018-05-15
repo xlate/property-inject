@@ -48,7 +48,7 @@ public class PropertyResourceProducerBean {
             throw new InjectionException(Properties.class + " can not be injected to type " + point.getType());
         }
 
-        final Class<?> beanType = point.getBean().getBeanClass();
+        final Class<?> beanType = point.getMember().getDeclaringClass();
         final ClassLoader loader = beanType.getClassLoader();
         final PropertyResource annotation = annotated.getAnnotation(PropertyResource.class);
         final PropertyResourceFormat format = annotation.format();
