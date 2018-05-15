@@ -19,6 +19,7 @@ package io.xlate.inject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.lang.reflect.Member;
 import java.util.Properties;
 
@@ -127,5 +128,16 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
         Properties result = bean.produceProperties(point);
         Assert.assertNotNull(result);
         Assert.assertEquals(3, result.size());
+    }
+
+    @Test(expected = InjectionException.class)
+    public void testProducePropertiesUnreadable() {
+        File resource = new File("target/test-classes/io/xlate/inject/Unreadable.properties");
+        resource.setReadable(false);
+        PropertyResource annotation = annotation("classpath:io/xlate/inject/Unreadable.properties",
+                                                 PropertyResourceFormat.PROPERTIES,
+                                                 false);
+        InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
+        bean.produceProperties(point);
     }
 }

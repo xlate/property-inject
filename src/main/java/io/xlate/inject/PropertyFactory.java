@@ -24,7 +24,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +33,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 class PropertyFactory {
 
-    private final static Logger logger = Logger.getLogger(PropertyFactory.class.getName());
     final Map<String, Properties> propertiesCache;
 
     PropertyFactory() {
@@ -111,90 +109,6 @@ class PropertyFactory {
 
         return properties;
     }
-
-    /*String getProperty(final ClassLoader classLoader,
-                       final String resourceName,
-                       final PropertyResourceFormat format,
-                       final String propertyName,
-                       final String defaultValue) throws IOException {
-
-        final Properties properties = getProperties(classLoader, resourceName, format);
-        return getProperty(properties, propertyName, defaultValue);
-    }
-
-    Properties getProperties(final ClassLoader classLoader,
-                             final String resourceName,
-                             final PropertyResourceFormat format) throws IOException {
-
-        final String resourceId = "classpath:" + resourceName;
-        final Properties properties;
-
-        if (propertiesCache.containsKey(resourceId)) {
-            properties = propertiesCache.get(resourceId);
-        } else {
-            properties = new Properties();
-            propertiesCache.put(resourceId, properties);
-
-            final ClassLoader loader;
-
-            if (classLoader == null) {
-                loader = ClassLoader.getSystemClassLoader();
-            } else {
-                loader = classLoader;
-            }
-
-            Enumeration<URL> resources = getResources(loader, resourceName);
-
-            while (resources.hasMoreElements()) {
-                URL resource = resources.nextElement();
-
-                try (InputStream resourceStream = resource.openStream()) {
-                    if (PropertyResourceFormat.XML == format) {
-                        properties.loadFromXML(resourceStream);
-                    } else {
-                        properties.load(resourceStream);
-                    }
-                }
-            }
-        }
-
-        return properties;
-    }
-
-    Enumeration<URL> getResources(ClassLoader loader, String resourceName) throws IOException {
-        Enumeration<URL> resources;
-        URI identifier = URI.create(resourceName);
-
-        if (identifier.getScheme() != null) {
-            final URL resource = identifier.toURL();
-
-            resources = new Enumeration<URL>() {
-                boolean hasMore = true;
-
-                @Override
-                public boolean hasMoreElements() {
-                    return hasMore;
-                }
-
-                @Override
-                public URL nextElement() {
-                    if (!hasMore) {
-                        throw new NoSuchElementException();
-                    }
-                    hasMore = false;
-                    return resource;
-                }
-            };
-        } else {
-            resources = loader.getResources(resourceName);
-        }
-
-        if (!resources.hasMoreElements()) {
-            logger.log(Level.WARNING, "Resource not found by name {0}", resourceName);
-        }
-
-        return resources;
-    }*/
 
     String getProperty(final Properties properties, final String propertyName, final String defaultValue) {
         final String value;
