@@ -16,7 +16,7 @@ class ClasspathURLStreamHandler extends URLStreamHandler {
     }
 
     @Override
-    protected URLConnection openConnection(URL u) {
+    protected URLConnection openConnection(URL u) throws IOException {
         final String resourcePath = u.getPath();
         final URL resourceUrl = classLoader.getResource(resourcePath);
 
@@ -24,10 +24,6 @@ class ClasspathURLStreamHandler extends URLStreamHandler {
             throw new InjectionException("Class-path resource not found: " + resourcePath);
         }
 
-        try {
-            return resourceUrl.openConnection();
-        } catch (IOException e) {
-            throw new InjectionException(e);
-        }
+        return resourceUrl.openConnection();
     }
 }
