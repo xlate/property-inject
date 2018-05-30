@@ -41,7 +41,7 @@ public @interface PropertyResource {
     public String value() default "";
 
     /**
-     * The format of the resource named by {@link #resourceName}. Supported
+     * The format of the resource named by {@link #value}. Supported
      * formats are XML and Properties (key/value pairs).
      *
      * @return the <code>PropertyResourceFormat</code> of the Properties
