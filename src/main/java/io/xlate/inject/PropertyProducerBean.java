@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (C) 2018 xlate.io LLC, http://www.xlate.io
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -20,10 +20,7 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLStreamHandler;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -248,8 +245,7 @@ public class PropertyProducerBean {
 
     String getProperty(InjectionPoint point) throws Exception {
         final Property annotation = point.getAnnotated().getAnnotation(Property.class);
-        final Class<?> beanType = point.getMember().getDeclaringClass(); //point.getBean().getBeanClass();
-        final ClassLoader loader = beanType.getClassLoader();
+        final Class<?> beanType = point.getMember().getDeclaringClass();
         final String propertyName = factory.getPropertyName(point, annotation.name());
         final String defaultValue = annotation.defaultValue();
 
@@ -262,45 +258,8 @@ public class PropertyProducerBean {
         }
 
         final PropertyResource resource = annotation.resource();
-        final String location = resource.value();
-        final URLStreamHandler handler = new ClasspathURLStreamHandler(loader);
         final String value;
-        final URL resourceUrl;
-
-        if (location.isEmpty()) {
-            StringBuilder resourceName = new StringBuilder();
-            resourceName.append("classpath:");
-            resourceName.append(beanType.getName().replace('.', '/'));
-            resourceName.append(".properties");
-
-            resourceUrl = new URL(null, resourceName.toString(), handler);
-        } else {
-            final String resolvedLocation;
-
-            if (resource.resolveEnvironment()) {
-                resolvedLocation = factory.replaceEnvironmentReferences(location);
-            } else {
-                resolvedLocation = location;
-            }
-
-            try {
-                final URI resourceId = URI.create(resolvedLocation);
-                final String scheme = resourceId.getScheme();
-
-                if (scheme != null) {
-                    if ("classpath".equals(scheme)) {
-                        resourceUrl = new URL(null, resolvedLocation, handler);
-                    } else {
-                        resourceUrl = resourceId.toURL();
-                    }
-                } else {
-                    resourceUrl = new URL(null, "classpath:" + location, handler);
-                }
-            } catch (IllegalArgumentException | MalformedURLException e) {
-                throw new InjectionException(e);
-            }
-        }
-
+        final URL resourceUrl = factory.getResourceUrl(resource, beanType);
         value = factory.getProperty(resourceUrl, resource.format(), propertyName, defaultValue);
 
         if (value != null && annotation.resolveEnvironment()) {

@@ -16,10 +16,7 @@
  ******************************************************************************/
 package io.xlate.inject;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLStreamHandler;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -49,39 +46,12 @@ public class PropertyResourceProducerBean {
         }
 
         final Class<?> beanType = point.getMember().getDeclaringClass();
-        final ClassLoader loader = beanType.getClassLoader();
         final PropertyResource annotation = annotated.getAnnotation(PropertyResource.class);
         final PropertyResourceFormat format = annotation.format();
-
-        String locator = annotation.value();
-
-        if (locator.isEmpty()) {
-            locator = beanType.getName().replace('.', '/') + ".properties";
-        } else if (annotation.resolveEnvironment()) {
-            locator = factory.replaceEnvironmentReferences(locator);
-        }
-
         final URL resourceUrl;
-        final URLStreamHandler handler = new ClasspathURLStreamHandler(loader);
 
         try {
-            final URI resourceId = URI.create(locator);
-            final String scheme = resourceId.getScheme();
-
-            if (scheme != null) {
-                if ("classpath".equals(scheme)) {
-                    resourceUrl = new URL(null, locator, handler);
-                } else {
-                    resourceUrl = resourceId.toURL();
-                }
-            } else {
-                resourceUrl = new URL(null, "classpath:" + locator, handler);
-            }
-        } catch (IllegalArgumentException | MalformedURLException e) {
-            throw new InjectionException(e);
-        }
-
-        try {
+            resourceUrl = factory.getResourceUrl(annotation, beanType);
             return factory.getProperties(resourceUrl, format);
         } catch (Exception e) {
             throw new InjectionException(e);
