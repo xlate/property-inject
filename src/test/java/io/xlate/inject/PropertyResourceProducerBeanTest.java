@@ -152,4 +152,15 @@ public class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest
             bean.produceProperties(point);
         });
     }
+
+    @Test
+    public void testProducePropertiesFileUrl() {
+        PropertyResource annotation = annotation("file:./src/test/resources/fileprops.properties",
+                                                 PropertyResourceFormat.PROPERTIES,
+                                                 false);
+        InjectionPoint point = injectionPoint(annotation, Properties.class, Member.class, "", -1);
+        Properties result = bean.produceProperties(point);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
 }
