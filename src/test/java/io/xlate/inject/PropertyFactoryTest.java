@@ -28,7 +28,6 @@ import java.lang.reflect.Member;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -172,7 +171,7 @@ public class PropertyFactoryTest {
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         assertEquals("testGetPropertyWithClassLoaderValue", output);
     }
 
@@ -190,7 +189,7 @@ public class PropertyFactoryTest {
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         assertEquals("testGetPropertyWithClassLoaderValue", output);
     }
 
@@ -201,7 +200,7 @@ public class PropertyFactoryTest {
         final PropertyResourceFormat format = PropertyResourceFormat.XML;
         final String propertyName = "testGetPropertyFromXmlWithClassLoader";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         assertEquals("testGetPropertyFromXmlWithClassLoaderValue", output);
     }
 
@@ -214,8 +213,8 @@ public class PropertyFactoryTest {
         final String defaultValue = Property.DEFAULT_NULL;
 
         @SuppressWarnings("unused")
-		InjectionException ex = assertThrows(InjectionException.class, () -> {
-        	bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
+        	bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         });
 
         //assertEquals("At least one DateFormat pattern must be provided.", ex.getMessage());
@@ -228,9 +227,9 @@ public class PropertyFactoryTest {
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyUrlFromClassPath";
         final String defaultValue = "DEFAULT";
-        String output = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        String output = bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         assertEquals("testGetPropertyUrlFromClassPathValue", output);
-        String output2 = bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        String output2 = bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         assertEquals(output, output2);
     }
 
@@ -242,8 +241,8 @@ public class PropertyFactoryTest {
         final String defaultValue = "";
 
         @SuppressWarnings("unused")
-		FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
-            bean.getProperty(resourceUrl, format, propertyName, defaultValue);
+        FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
+            bean.getProperty(resourceUrl, format, false, propertyName, defaultValue);
         });
     }
 

@@ -1,11 +1,10 @@
 package io.xlate.inject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-
-import javax.enterprise.inject.InjectionException;
 
 class ClasspathURLStreamHandler extends URLStreamHandler {
     /** The classloader to find resources from. */
@@ -21,7 +20,7 @@ class ClasspathURLStreamHandler extends URLStreamHandler {
         final URL resourceUrl = classLoader.getResource(resourcePath);
 
         if (resourceUrl == null) {
-            throw new InjectionException("Class-path resource not found: " + resourcePath);
+            throw new FileNotFoundException("Class-path resource not found: " + resourcePath);
         }
 
         return resourceUrl.openConnection();

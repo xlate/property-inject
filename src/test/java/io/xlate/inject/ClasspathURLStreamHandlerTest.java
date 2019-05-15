@@ -3,12 +3,11 @@ package io.xlate.inject;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import javax.enterprise.inject.InjectionException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ class ClasspathURLStreamHandlerTest {
 	public void testResourceUrlResolvesNull() throws MalformedURLException {
 		URL target = new URL(null, "classpath:does/not/exist.txt", cut);
         @SuppressWarnings("unused")
-		InjectionException ex = assertThrows(InjectionException.class, () -> {
+        FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
 			target.openConnection();
         });
 	}

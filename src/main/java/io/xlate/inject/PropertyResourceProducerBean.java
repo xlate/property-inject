@@ -48,11 +48,11 @@ public class PropertyResourceProducerBean {
         final Class<?> beanType = point.getMember().getDeclaringClass();
         final PropertyResource annotation = annotated.getAnnotation(PropertyResource.class);
         final PropertyResourceFormat format = annotation.format();
-        final URL resourceUrl;
+        URL resourceUrl = null;
 
         try {
             resourceUrl = factory.getResourceUrl(annotation, beanType);
-            return factory.getProperties(resourceUrl, format);
+            return factory.getProperties(resourceUrl, format, annotation.allowMissingResource());
         } catch (Exception e) {
             throw new InjectionException(e);
         }

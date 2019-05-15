@@ -20,7 +20,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Properties;
 
+import javax.enterprise.inject.InjectionException;
 import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
@@ -41,8 +43,8 @@ public @interface PropertyResource {
     public String value() default "";
 
     /**
-     * The format of the resource named by {@link #value}. Supported
-     * formats are XML and Properties (key/value pairs).
+     * The format of the resource named by {@link #value}. Supported formats are
+     * XML and Properties (key/value pairs).
      *
      * @return the <code>PropertyResourceFormat</code> of the Properties
      *         resource
@@ -73,4 +75,15 @@ public @interface PropertyResource {
      */
     @Nonbinding
     public boolean resolveEnvironment() default false;
+
+    /**
+     * Value to indicate whether the property injection processor should treat
+     * a missing resource as an {@link Properties}.
+     *
+     * @return true to treat a missing resource as if it were an empty
+     *         {@link Properties}, false to throw an {@link InjectionException}
+     *         (default behavior).
+     */
+    @Nonbinding
+    public boolean allowMissingResource() default false;
 }

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package io.xlate.inject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Executable;
@@ -27,6 +28,8 @@ import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +40,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 class PropertyFactory {
 
+    private final static Logger logger = Logger.getLogger(PropertyFactory.class.getName());
     private static final String CLASSPATH = "classpath";
     final Map<String, Properties> propertiesCache;
 
@@ -128,15 +132,17 @@ class PropertyFactory {
 
     String getProperty(final URL resourceUrl,
                        final PropertyResourceFormat format,
+                       final boolean allowMissingResource,
                        final String propertyName,
                        final String defaultValue) throws IOException {
 
-        final Properties properties = getProperties(resourceUrl, format);
+        final Properties properties = getProperties(resourceUrl, format, allowMissingResource);
         return getProperty(properties, propertyName, defaultValue);
     }
 
     Properties getProperties(final URL resourceUrl,
-                             final PropertyResourceFormat format) throws IOException {
+                             final PropertyResourceFormat format,
+                             boolean allowMissingResource) throws IOException {
 
         final Properties properties;
         final String resourceId = resourceUrl.toString();
@@ -152,6 +158,13 @@ class PropertyFactory {
                     properties.loadFromXML(resourceStream);
                 } else {
                     properties.load(resourceStream);
+                }
+            } catch (FileNotFoundException e) {
+                if (allowMissingResource) {
+                    logger.log(Level.WARNING, "Resource not found: " + resourceUrl, e);
+                    properties.clear();
+                } else {
+                    throw e;
                 }
             }
         }

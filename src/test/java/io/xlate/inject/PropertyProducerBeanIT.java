@@ -62,6 +62,12 @@ public class PropertyProducerBeanIT {
     @Inject @Property(resolveEnvironment = true)
     String string8;
 
+    @Inject
+    @Property(resource = @PropertyResource(value = "missing.properties",
+                                           allowMissingResource = true),
+              defaultValue = "defaultString9")
+    String string9;
+
     @Inject @Property
     int int1;
 
@@ -110,6 +116,11 @@ public class PropertyProducerBeanIT {
     @Test
     public void testString8_NotFound() {
         assertNull(string8);
+    }
+
+    @Test
+    public void testString9_MissingResourceUsesDefault() {
+        assertEquals("defaultString9", string9);
     }
 
     @Test
