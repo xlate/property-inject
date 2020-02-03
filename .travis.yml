@@ -14,7 +14,7 @@ addons:
 
 script:
   - # Build project, run tests, and generate JavaDocs
-  - mvn -B test javadoc:javadoc
+  - mvn -B verify javadoc:javadoc
 
 after_success:
   - # Runs the tests with coverage and then execute the SonarCloud analysis (Java 11+ only)
