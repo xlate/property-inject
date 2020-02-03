@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +41,7 @@ import javax.json.JsonObject;
 @ApplicationScoped
 public class PropertyProducerBean {
 
-    private final static Logger logger = Logger.getLogger(PropertyProducerBean.class.getName());
+    private static final Logger logger = Logger.getLogger(PropertyProducerBean.class.getName());
 
     private final PropertyFactory factory = new PropertyFactory();
 
@@ -59,93 +60,35 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public Boolean produceBooleanProperty(InjectionPoint injectionPoint) {
-        Boolean property = null;
-
-        try {
-            final String value = getProperty(injectionPoint);
-
-            if (value != null) {
-                property = Boolean.valueOf(value);
-            } else if (boolean.class.equals(injectionPoint.getType())) {
-                property = Boolean.FALSE;
-            }
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
-
-        return property;
+        return produceWrapped(injectionPoint, Boolean.TYPE, Boolean::valueOf, Boolean.FALSE);
     }
 
     @Produces
     @Dependent
     @Property
     public Integer produceIntegerProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-
-            if (value != null) {
-                return Integer.valueOf(value);
-            }
-
-            final Type type = injectionPoint.getType();
-            return type.equals(int.class) ? Integer.valueOf(0) : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceWrapped(injectionPoint, Integer.TYPE, Integer::valueOf, Integer.valueOf(0));
     }
 
     @Produces
     @Dependent
     @Property
     public Long produceLongProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-
-            if (value != null) {
-                return Long.valueOf(value);
-            }
-
-            final Type type = injectionPoint.getType();
-            return type.equals(long.class) ? Long.valueOf(0L) : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceWrapped(injectionPoint, Long.TYPE, Long::valueOf, Long.valueOf(0L));
     }
 
     @Produces
     @Dependent
     @Property
     public Float produceFloatProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-
-            if (value != null) {
-                return Float.valueOf(value);
-            }
-
-            final Type type = injectionPoint.getType();
-            return type.equals(float.class) ? Float.valueOf(0f) : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceWrapped(injectionPoint, Float.TYPE, Float::valueOf, Float.valueOf(0f));
     }
 
     @Produces
     @Dependent
     @Property
     public Double produceDoubleProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-
-            if (value != null) {
-                return Double.valueOf(value);
-            }
-
-            final Type type = injectionPoint.getType();
-            return type.equals(double.class) ? Double.valueOf(0d) : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceWrapped(injectionPoint, Double.TYPE, Double::valueOf, Double.valueOf(0d));
     }
 
     @Produces
@@ -238,6 +181,21 @@ public class PropertyProducerBean {
         try {
             final String value = getProperty(injectionPoint);
             return value != null ? Json.createReader(new StringReader(value)).readObject() : null;
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
+
+    private <T> T produceWrapped(InjectionPoint injectionPoint, Class<T> type, Function<String, T> parser, T defaultValue) {
+        try {
+            final String value = getProperty(injectionPoint);
+
+            if (value != null) {
+                return parser.apply(value);
+            }
+
+            final Type injectionType = injectionPoint.getType();
+            return injectionType.equals(type) ? defaultValue : null;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
