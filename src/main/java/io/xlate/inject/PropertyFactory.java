@@ -40,7 +40,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 class PropertyFactory {
 
-    private final static Logger logger = Logger.getLogger(PropertyFactory.class.getName());
+    private static final Logger logger = Logger.getLogger(PropertyFactory.class.getName());
     private static final String CLASSPATH = "classpath";
     final Map<String, Properties> propertiesCache;
 

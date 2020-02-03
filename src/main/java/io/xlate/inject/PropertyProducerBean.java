@@ -16,6 +16,7 @@
  ******************************************************************************/
 package io.xlate.inject;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -37,6 +38,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
 
 @ApplicationScoped
 public class PropertyProducerBean {
@@ -166,24 +169,14 @@ public class PropertyProducerBean {
     @Dependent
     @Property
     public JsonArray produceJsonArrayProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-            return value != null ? Json.createReader(new StringReader(value)).readArray() : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceJson(injectionPoint, JsonReader::readArray);
     }
 
     @Produces
     @Dependent
     @Property
     public JsonObject produceJsonObjectProperty(InjectionPoint injectionPoint) {
-        try {
-            final String value = getProperty(injectionPoint);
-            return value != null ? Json.createReader(new StringReader(value)).readObject() : null;
-        } catch (Exception e) {
-            throw new InjectionException(e);
-        }
+        return produceJson(injectionPoint, JsonReader::readObject);
     }
 
     private <T> T produceWrapped(InjectionPoint injectionPoint, Class<T> type, Function<String, T> parser, T defaultValue) {
@@ -201,7 +194,21 @@ public class PropertyProducerBean {
         }
     }
 
-    String getProperty(InjectionPoint point) throws Exception {
+    private <T extends JsonStructure> T produceJson(InjectionPoint injectionPoint, Function<JsonReader, T> jsonSupplier) {
+        try {
+            final String value = getProperty(injectionPoint);
+            if (value != null) {
+                try (JsonReader reader = Json.createReader(new StringReader(value))) {
+                    return jsonSupplier.apply(reader);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            throw new InjectionException(e);
+        }
+    }
+
+    String getProperty(InjectionPoint point) throws IOException {
         final Property annotation = point.getAnnotated().getAnnotation(Property.class);
         final Class<?> beanType = point.getMember().getDeclaringClass();
         final String propertyName = factory.getPropertyName(point, annotation.name());

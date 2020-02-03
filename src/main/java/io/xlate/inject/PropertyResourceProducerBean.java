@@ -31,7 +31,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 public class PropertyResourceProducerBean {
 
     @SuppressWarnings("unused")
-    private final static Logger logger = Logger.getLogger(PropertyResourceProducerBean.class.getName());
+    private static final Logger logger = Logger.getLogger(PropertyResourceProducerBean.class.getName());
 
     private final PropertyFactory factory = new PropertyFactory();
 
