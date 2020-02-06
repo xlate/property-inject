@@ -55,7 +55,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml,${project.build.directory}/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
@@ -141,6 +141,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.2</version>
         <configuration>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <environmentVariables>
             <INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
             <STRING7>string7value.env</STRING7>
@@ -158,6 +159,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.22.2</version>
         <configuration>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <environmentVariables>
             <INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
             <STRING7>string7value.env</STRING7>
