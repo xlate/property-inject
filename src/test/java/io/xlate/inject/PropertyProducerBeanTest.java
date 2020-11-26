@@ -54,7 +54,7 @@ import org.mockito.quality.Strictness;
 @RunWith(JUnitPlatform.class)
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class PropertyProducerBeanTest {
+class PropertyProducerBeanTest {
 
     private PropertyProducerBean bean;
 
@@ -62,7 +62,7 @@ public class PropertyProducerBeanTest {
     PropertyResource defaultPropertyResource;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         bean = new PropertyProducerBean();
         when(defaultPropertyResource.value()).thenReturn("");
         when(defaultPropertyResource.format()).thenReturn(PropertyResourceFormat.PROPERTIES);
@@ -131,7 +131,7 @@ public class PropertyProducerBeanTest {
         when(member.getName()).thenReturn(memberName);
 
         @SuppressWarnings("rawtypes")
-		Class declaringClass = getClass();
+        Class declaringClass = getClass();
         when(member.getDeclaringClass()).thenReturn(declaringClass);
 
         //@SuppressWarnings("rawtypes")
@@ -149,7 +149,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMember() throws Exception {
+    void testGetPropertyForFieldMember() throws Exception {
         Property property = this.mockProperty("testGetPropertyForFieldMember",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -165,7 +165,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMemberUsingFileUrl() throws Exception {
+    void testGetPropertyForFieldMemberUsingFileUrl() throws Exception {
         Property property = this.mockProperty("testGetPropertyForFieldMemberUsingFileUrl",
                                               new File("target/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties").toURI()
                                                                                                                                  .toURL()
@@ -183,7 +183,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyUsingInvalidUri() throws Exception {
+    void testGetPropertyUsingInvalidUri() throws Exception {
         Property property = this.mockProperty("irrelevant",
                                               "\n\n\n",
                                               PropertyResourceFormat.PROPERTIES,
@@ -196,13 +196,13 @@ public class PropertyProducerBeanTest {
                                                        -1);
 
         @SuppressWarnings("unused")
-		InjectionException ex = assertThrows(InjectionException.class, () -> {
+        InjectionException ex = assertThrows(InjectionException.class, () -> {
             bean.getProperty(point);
         });
     }
 
     @Test
-    public void testGetPropertyUsingMalformedUrl() throws Exception {
+    void testGetPropertyUsingMalformedUrl() throws Exception {
         Property property = this.mockProperty("irrelevant",
                                               "unexpected://not/relevant/when/protocol/unknown.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -220,7 +220,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMemberWithClasspathProtocol() throws Exception {
+    void testGetPropertyForFieldMemberWithClasspathProtocol() throws Exception {
         Property property = this.mockProperty("testGetPropertyForFieldMemberWithClasspathProtocol",
                                               "classpath:io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -236,7 +236,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMemberWithResourceEnvResolution() throws Exception {
+    void testGetPropertyForFieldMemberWithResourceEnvResolution() throws Exception {
         Property property = this.mockProperty("testGetPropertyForFieldMemberWithResourceEnvResolution",
                                               "",
                                               "${env.RESOURCE_LOC0}",
@@ -255,7 +255,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetSystemPropertyForFieldMember() throws Exception {
+    void testGetSystemPropertyForFieldMember() throws Exception {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -272,7 +272,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMemberWithDefaultResourceName() throws Exception {
+    void testGetPropertyForFieldMemberWithDefaultResourceName() throws Exception {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -288,7 +288,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testGetPropertyForFieldMemberWithEnvReplacement() throws Exception {
+    void testGetPropertyForFieldMemberWithEnvReplacement() throws Exception {
         Property property = this.mockProperty("",
                                               "",
                                               "",
@@ -308,7 +308,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce String *************************/
     @Test
-    public void testProducePropertyString() {
+    void testProducePropertyString() {
         Property property = this.mockProperty("testProducePropertyString",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -320,7 +320,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyStringInvalid() {
+    void testProducePropertyStringInvalid() {
         Property property = this.mockProperty("testProducePropertyStringInvalid",
                                               "io/xlate/inject/Invalid.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -335,7 +335,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Boolean *************************/
     @Test
-    public void testProducePropertyBoolean() {
+    void testProducePropertyBoolean() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/test/test.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -346,7 +346,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBooleanNull() {
+    void testProducePropertyBooleanNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -357,7 +357,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBooleanInvalid() {
+    void testProducePropertyBooleanInvalid() {
         Property property = this.mockProperty("testProducePropertyBooleanInvalid",
                                               "io/xlate/inject/Invalid.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -372,7 +372,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce native Boolean (boolean) *************************/
     @Test
-    public void testProducePropertyNativeBoolean() {
+    void testProducePropertyNativeBoolean() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/test/test.xml",
                                               PropertyResourceFormat.XML,
@@ -387,7 +387,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyNativeBooleanFalse() {
+    void testProducePropertyNativeBooleanFalse() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -399,7 +399,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Integer *************************/
     @Test
-    public void testProducePropertyInteger() {
+    void testProducePropertyInteger() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -410,7 +410,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyIntegerNull() {
+    void testProducePropertyIntegerNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -421,7 +421,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyIntegerInvalid() {
+    void testProducePropertyIntegerInvalid() {
         Property property = this.mockProperty("testProducePropertyIntegerInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -436,7 +436,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce native Integer (int) *************************/
     @Test
-    public void testProducePropertyNativeInteger() {
+    void testProducePropertyNativeInteger() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -451,7 +451,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyNativeIntegerZero() {
+    void testProducePropertyNativeIntegerZero() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -463,7 +463,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Long *************************/
     @Test
-    public void testProducePropertyLong() {
+    void testProducePropertyLong() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -478,7 +478,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyLongNull() {
+    void testProducePropertyLongNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -489,7 +489,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyLongInvalid() {
+    void testProducePropertyLongInvalid() {
         Property property = this.mockProperty("testProducePropertyLongInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -508,7 +508,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce native Long (long) *************************/
     @Test
-    public void testProducePropertyNativeLong() {
+    void testProducePropertyNativeLong() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -523,7 +523,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyNativeLongZero() {
+    void testProducePropertyNativeLongZero() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -535,7 +535,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Float *************************/
     @Test
-    public void testProducePropertyFloat() {
+    void testProducePropertyFloat() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -546,7 +546,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyFloatNull() {
+    void testProducePropertyFloatNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -557,7 +557,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyFloatInvalid() {
+    void testProducePropertyFloatInvalid() {
         Property property = this.mockProperty("testProducePropertyFloatInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -572,7 +572,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce native Float (float) *************************/
     @Test
-    public void testProducePropertyNativeFloat() {
+    void testProducePropertyNativeFloat() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -583,7 +583,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyNativeFloatZero() {
+    void testProducePropertyNativeFloatZero() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -595,7 +595,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Double *************************/
     @Test
-    public void testProducePropertyDouble() {
+    void testProducePropertyDouble() {
         Property property = this.mockProperty("",
                                               "io/xlate/inject/PropertyProducerBeanTest.properties",
                                               PropertyResourceFormat.PROPERTIES,
@@ -610,7 +610,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyDoubleNull() {
+    void testProducePropertyDoubleNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -621,7 +621,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyDoubleInvalid() {
+    void testProducePropertyDoubleInvalid() {
         Property property = this.mockProperty("testProducePropertyDoubleInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -636,7 +636,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce native Double (double) *************************/
     @Test
-    public void testProducePropertyNativeDouble() {
+    void testProducePropertyNativeDouble() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -651,7 +651,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyNativeDoubleZero() {
+    void testProducePropertyNativeDoubleZero() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -663,7 +663,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce BigDecimal *************************/
     @Test
-    public void testProducePropertyBigDecimal() {
+    void testProducePropertyBigDecimal() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -674,7 +674,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigDecimalNull() {
+    void testProducePropertyBigDecimalNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -685,7 +685,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigDecimalFormatted() {
+    void testProducePropertyBigDecimalFormatted() {
         Property property = this.mockProperty("",
                                               "#,##0",
                                               "",
@@ -698,7 +698,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigDecimalInvalid() {
+    void testProducePropertyBigDecimalInvalid() {
         Property property = this.mockProperty("testProducePropertyBigDecimalInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -716,7 +716,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigDecimalFormattedLoggingFine() {
+    void testProducePropertyBigDecimalFormattedLoggingFine() {
         Property property = this.mockProperty("",
                                               "#,##0",
                                               "",
@@ -750,7 +750,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce BigInteger *************************/
     @Test
-    public void testProducePropertyBigInteger() {
+    void testProducePropertyBigInteger() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -761,7 +761,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigIntegerNull() {
+    void testProducePropertyBigIntegerNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -772,7 +772,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigIntegerFormatted() {
+    void testProducePropertyBigIntegerFormatted() {
         Property property = this.mockProperty("",
                                               "#,##0",
                                               "",
@@ -785,7 +785,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigIntegerFormattedTruncated() {
+    void testProducePropertyBigIntegerFormattedTruncated() {
         Property property = this.mockProperty("",
                                               "#,##0",
                                               "",
@@ -798,7 +798,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyBigIntegerInvalid() {
+    void testProducePropertyBigIntegerInvalid() {
         Property property = this.mockProperty("testProducePropertyBigIntegerInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -817,7 +817,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce Date *************************/
     @Test
-    public void testProduceDateProperty() {
+    void testProduceDateProperty() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -830,7 +830,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProduceDatePropertyPattern() {
+    void testProduceDatePropertyPattern() {
         Property property = this.mockProperty("",
                                               "M/d/yyyy H:mm:ss.SSS z",
                                               "",
@@ -845,7 +845,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProduceDatePropertyNull() {
+    void testProduceDatePropertyNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -856,7 +856,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProduceDatePropertyInvalid() {
+    void testProduceDatePropertyInvalid() {
         Property property = this.mockProperty("testProduceDatePropertyInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -871,7 +871,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce JsonArray *************************/
     @Test
-    public void testProducePropertyJsonArray() {
+    void testProducePropertyJsonArray() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -882,7 +882,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyJsonArrayNull() {
+    void testProducePropertyJsonArrayNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -893,7 +893,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyJsonArrayInvalid() {
+    void testProducePropertyJsonArrayInvalid() {
         Property property = this.mockProperty("testProducePropertyJsonArrayInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -912,7 +912,7 @@ public class PropertyProducerBeanTest {
 
     /*-****************** produce JsonObject *************************/
     @Test
-    public void testProducePropertyJsonObject() {
+    void testProducePropertyJsonObject() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -931,7 +931,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyJsonObjectNull() {
+    void testProducePropertyJsonObjectNull() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -942,7 +942,7 @@ public class PropertyProducerBeanTest {
     }
 
     @Test
-    public void testProducePropertyJsonObjectInvalid() {
+    void testProducePropertyJsonObjectInvalid() {
         Property property = this.mockProperty("testProducePropertyJsonObjectInvalid",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,

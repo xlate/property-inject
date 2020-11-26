@@ -33,10 +33,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(WeldJunit5Extension.class)
-public class PropertyResourceProducerBeanIT {
+class PropertyResourceProducerBeanIT {
 
 	@WeldSetup
-	public WeldInitiator weld = WeldInitiator
+	WeldInitiator weld = WeldInitiator
 		.from(PropertyResourceProducerBean.class)
 		.build();
 
@@ -49,7 +49,7 @@ public class PropertyResourceProducerBeanIT {
     Properties props2;
 
     @Test
-    public void testDefaultProps() {
+    void testDefaultProps() {
         assertNotNull(defaultProps);
         assertEquals(2, defaultProps.size());
         assertEquals("val1", defaultProps.getProperty("key1"));
@@ -57,7 +57,7 @@ public class PropertyResourceProducerBeanIT {
     }
 
     @Test
-    public void testProps2() {
+    void testProps2() {
         assertNotNull(props2);
         assertEquals(1, props2.size());
         assertEquals("true", props2.getProperty("value.is.found"));

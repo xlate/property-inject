@@ -34,21 +34,21 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-public class PropertyInjectionExtensionTest {
+class PropertyInjectionExtensionTest {
 
     PropertyInjectionExtension ext;
     BeforeBeanDiscovery event;
     BeanManager beanManager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ext = new PropertyInjectionExtension();
         event = mock(BeforeBeanDiscovery.class);
         beanManager = mock(BeanManager.class);
     }
 
     @Test
-    public void testBeforeBeanDiscoveryLogFiner() {
+    void testBeforeBeanDiscoveryLogFiner() {
         Logger extLogger = Logger.getLogger(ext.getClass().getName());
         extLogger.setLevel(Level.FINER);
         final List<String> messages = new ArrayList<>(2);
@@ -69,7 +69,7 @@ public class PropertyInjectionExtensionTest {
     }
 
     @Test
-    public void testBeforeBeanDiscoveryLogFine() {
+    void testBeforeBeanDiscoveryLogFine() {
         Logger extLogger = Logger.getLogger(ext.getClass().getName());
         extLogger.setLevel(Level.FINE);
         final List<String> messages = new ArrayList<>(0);

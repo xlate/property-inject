@@ -161,7 +161,7 @@ class PropertyFactory {
                 }
             } catch (FileNotFoundException e) {
                 if (allowMissingResource) {
-                    logger.log(Level.WARNING, "Resource not found: " + resourceUrl, e);
+                    logger.log(Level.WARNING, e, () -> "Resource not found: " + resourceUrl);
                     properties.clear();
                 } else {
                     throw e;

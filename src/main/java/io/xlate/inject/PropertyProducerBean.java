@@ -126,10 +126,7 @@ public class PropertyProducerBean {
                 if (pattern.isEmpty()) {
                     number = new BigDecimal(value);
                 } else {
-                    if (logger.isLoggable(Level.FINER)) {
-                        logger.log(Level.FINER, "Parsing number with using pattern [" + pattern + ']');
-                    }
-
+                    logger.log(Level.FINER, () -> "Parsing number with using pattern [" + pattern + ']');
                     DecimalFormat format = new DecimalFormat(pattern);
                     format.setParseBigDecimal(true);
                     number = (BigDecimal) format.parse(value);

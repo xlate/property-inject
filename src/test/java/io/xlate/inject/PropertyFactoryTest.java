@@ -45,14 +45,14 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class PropertyFactoryTest {
+class PropertyFactoryTest {
     private PropertyFactory bean;
 
     @Mock
     PropertyResource defaultPropertyResource;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         bean = new PropertyFactory();
         when(defaultPropertyResource.value()).thenReturn("");
         when(defaultPropertyResource.format()).thenReturn(PropertyResourceFormat.PROPERTIES);
@@ -100,7 +100,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyNameForFieldMember() {
+    void testGetPropertyNameForFieldMember() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -112,7 +112,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyNameForExecutableMember() {
+    void testGetPropertyNameForExecutableMember() {
         Property property = this.mockProperty("",
                                               "",
                                               PropertyResourceFormat.PROPERTIES,
@@ -124,7 +124,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyNameForProvidedName() {
+    void testGetPropertyNameForProvidedName() {
         String name = "provided.name";
         Property property = this.mockProperty(name,
                                               "",
@@ -137,7 +137,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetSystemPropertyDefault() {
+    void testGetSystemPropertyDefault() {
         String name = "get.system.property";
         String systemKey = getClass().getName() + '.' + name;
         Property property = this.mockProperty(name,
@@ -151,7 +151,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetSystemPropertySpecified() {
+    void testGetSystemPropertySpecified() {
         String name = "get.system.property";
         String systemKey = "getSystemPropertySpecified";
         Property property = this.mockProperty(name,
@@ -165,7 +165,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyWithClassLoader() throws IOException {
+    void testGetPropertyWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
@@ -176,7 +176,7 @@ public class PropertyFactoryTest {
     }
 
     /*@Test(expected = NoSuchElementException.class)
-    public void testGetResourcesForceNoSuchElement() throws IOException {
+    void testGetResourcesForceNoSuchElement() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         Enumeration<URL> result = bean.getResources(classLoader, "file:/dev/null");
         assertNotNull(result.nextElement());
@@ -184,7 +184,7 @@ public class PropertyFactoryTest {
     }*/
 
     @Test
-    public void testGetPropertyFromFile() throws IOException {
+    void testGetPropertyFromFile() throws IOException {
         final URL resourceUrl = new URL(null, "file:target/test-classes/io/xlate/inject/test/test.properties");
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "testGetPropertyWithClassLoader";
@@ -194,7 +194,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromXmlWithClassLoader() throws IOException {
+    void testGetPropertyFromXmlWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.xml", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.XML;
@@ -205,7 +205,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyMissingResourceWithClassLoader() throws IOException {
+    void testGetPropertyMissingResourceWithClassLoader() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/missing.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
@@ -221,7 +221,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyUrlCachedFromClassPath() throws IOException {
+    void testGetPropertyUrlCachedFromClassPath() throws IOException {
         final ClassLoader classLoader = getClass().getClassLoader();
         final URL resourceUrl = new URL(null, "classpath:io/xlate/inject/test/test.properties", new ClasspathURLStreamHandler(classLoader));
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
@@ -234,7 +234,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyNullOpenStream() throws IOException {
+    void testGetPropertyNullOpenStream() throws IOException {
         final URL resourceUrl = new URL(null, "file:////tmp/does-not-exist.properties");
         final PropertyResourceFormat format = PropertyResourceFormat.PROPERTIES;
         final String propertyName = "";
@@ -247,7 +247,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesFoundWithDefault() {
+    void testGetPropertyFromPropertiesFoundWithDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = "defaulted";
@@ -256,7 +256,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesNotFoundWithDefault() {
+    void testGetPropertyFromPropertiesNotFoundWithDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = "defaulted";
@@ -265,7 +265,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesFoundWithoutDefault() {
+    void testGetPropertyFromPropertiesFoundWithoutDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = "";
@@ -274,7 +274,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesNotFoundWithoutDefault() {
+    void testGetPropertyFromPropertiesNotFoundWithoutDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = Property.DEFAULT_NULL;
@@ -283,7 +283,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesFoundWithNullDefault() {
+    void testGetPropertyFromPropertiesFoundWithNullDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = null;
@@ -292,7 +292,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testGetPropertyFromPropertiesNotFoundWithNullDefault() {
+    void testGetPropertyFromPropertiesNotFoundWithNullDefault() {
         Properties props = new Properties();
         props.setProperty("key1", "propertyValue");
         String defaultValue = Property.DEFAULT_NULL;
@@ -301,7 +301,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testReplaceEnvironmentReferences() {
+    void testReplaceEnvironmentReferences() {
         String expected = "Blah blah '" + System.getenv("INJECTED_VARIABLE") + "' bLaH blah";
         String input = "Blah blah '${env.INJECTED_VARIABLE}' bLaH blah";
         String output = bean.replaceEnvironmentReferences(input);
@@ -309,7 +309,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testReplaceEnvironmentReferencesMissing() {
+    void testReplaceEnvironmentReferencesMissing() {
         String expected = "Blah blah '' bLaH blah";
         String input = "Blah blah '${env.INJECTED_VARIABLE2}' bLaH blah";
         String output = bean.replaceEnvironmentReferences(input);
@@ -317,7 +317,7 @@ public class PropertyFactoryTest {
     }
 
     @Test
-    public void testReplaceEnvironmentReferencesInvalid() {
+    void testReplaceEnvironmentReferencesInvalid() {
         String expected = "Blah blah '${INJECTED_VARIABLE2}' bLaH blah";
         String input = "Blah blah '${INJECTED_VARIABLE2}' bLaH blah";
         String output = bean.replaceEnvironmentReferences(input);

@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
 @ExtendWith(WeldJunit5Extension.class)
-public class PropertyProducerBeanIT {
+class PropertyProducerBeanIT {
 
 	@WeldSetup
 	public WeldInitiator weld = WeldInitiator
@@ -79,62 +79,62 @@ public class PropertyProducerBeanIT {
     int int3;
 
     @Test
-    public void testString1_DefaultLookup() {
+    void testString1_DefaultLookup() {
         assertEquals("string1value", string1);
     }
 
     @Test
-    public void testString2_DefaultLookup_NotFound() {
+    void testString2_DefaultLookup_NotFound() {
         assertNull(string2);
     }
 
     @Test
-    public void testString3_OverriddenName() {
+    void testString3_OverriddenName() {
         assertEquals("string3value", string3);
     }
 
     @Test
-    public void testString4_OverriddenBundle() {
+    void testString4_OverriddenBundle() {
         assertEquals("string4value", string4);
     }
 
     @Test
-    public void testString5_NotFoundWithDefaultValue() {
+    void testString5_NotFoundWithDefaultValue() {
         assertEquals("string5default", string5);
     }
 
     @Test
-    public void testString6_FoundInSystemProperties() {
+    void testString6_FoundInSystemProperties() {
         assertEquals("string6value.system", string6);
     }
 
     @Test
-    public void testString7_FoundInEnvironmentVar() {
+    void testString7_FoundInEnvironmentVar() {
         assertEquals("string7value.env", string7);
     }
 
     @Test
-    public void testString8_NotFound() {
+    void testString8_NotFound() {
         assertNull(string8);
     }
 
     @Test
-    public void testString9_MissingResourceUsesDefault() {
+    void testString9_MissingResourceUsesDefault() {
         assertEquals("defaultString9", string9);
     }
 
     @Test
-    public void testInt1_DefaultLookup() {
+    void testInt1_DefaultLookup() {
         assertEquals(42, int1);
     }
 
     @Test
-    public void testInt2_NotFoundWithDefaultValue() {
+    void testInt2_NotFoundWithDefaultValue() {
         assertEquals(42, int2);
     }
 
     @Test
-    public void testInt3_NotFoundWithPrimitiveDefaultValue() {
+    void testInt3_NotFoundWithPrimitiveDefaultValue() {
         assertEquals(0, int3);
     }
 }

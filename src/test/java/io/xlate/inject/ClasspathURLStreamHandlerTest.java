@@ -17,28 +17,27 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 class ClasspathURLStreamHandlerTest {
 
-	ClasspathURLStreamHandler cut;
+    ClasspathURLStreamHandler cut;
 
+    @BeforeEach
+    void setup() {
+        cut = new ClasspathURLStreamHandler(getClass().getClassLoader());
+    }
 
-	@BeforeEach
-	public void setup() {
-		cut = new ClasspathURLStreamHandler(getClass().getClassLoader());
-	}
-
-	@Test
-	public void testResourceUrlResolvesNull() throws MalformedURLException {
-		URL target = new URL(null, "classpath:does/not/exist.txt", cut);
+    @Test
+    void testResourceUrlResolvesNull() throws MalformedURLException {
+        URL target = new URL(null, "classpath:does/not/exist.txt", cut);
         @SuppressWarnings("unused")
         FileNotFoundException ex = assertThrows(FileNotFoundException.class, () -> {
-			target.openConnection();
+            target.openConnection();
         });
-	}
+    }
 
-	@Test
-	public void testResourceUrlFound() throws IOException {
-		URL target = new URL(null, "classpath:META-INF/beans.xml", cut);
-		URLConnection connection = target.openConnection();
-		assertNotNull(connection);
-	}
+    @Test
+    void testResourceUrlFound() throws IOException {
+        URL target = new URL(null, "classpath:META-INF/beans.xml", cut);
+        URLConnection connection = target.openConnection();
+        assertNotNull(connection);
+    }
 
 }
