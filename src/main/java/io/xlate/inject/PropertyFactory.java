@@ -42,6 +42,7 @@ class PropertyFactory {
 
     private static final Logger logger = Logger.getLogger(PropertyFactory.class.getName());
     private static final String CLASSPATH = "classpath";
+    private static final String USER_DIR = "userdir";
     final Map<String, Properties> propertiesCache;
 
     PropertyFactory() {
@@ -54,7 +55,7 @@ class PropertyFactory {
 
     URL getResourceUrl(PropertyResource annotation, Class<?> beanType) throws MalformedURLException {
         final String location = annotation.value();
-        final URL resourceUrl;
+        URL resourceUrl;
 
         if (location.isEmpty()) {
             StringBuilder resourceName = new StringBuilder(CLASSPATH);
@@ -78,8 +79,12 @@ class PropertyFactory {
                 if (scheme != null) {
                     if (CLASSPATH.equals(scheme)) {
                         resourceUrl = new URL(null, resolvedLocation, classPathHandler(beanType));
+                    } if (USER_DIR.equals(scheme)) {
+                    	
+                    	resourceUrl = new URL("file://" + System.getProperty("user.dir") + "/" + resourceId.getAuthority());
+                    	
                     } else {
-                        resourceUrl = resourceId.toURL();
+                    	resourceUrl = resourceId.toURL();
                     }
                 } else {
                     resourceUrl = new URL(null, CLASSPATH + ':' + location, classPathHandler(beanType));
