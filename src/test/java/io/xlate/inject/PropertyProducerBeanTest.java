@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -41,6 +42,7 @@ import javax.enterprise.inject.spi.AnnotatedParameter;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.json.Json;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -55,11 +57,14 @@ class PropertyProducerBeanTest {
     @Mock
     PropertyResource defaultPropertyResource;
 
+    private Locale locale;
     @BeforeEach
     void setup() {
         bean = new PropertyProducerBean();
         when(defaultPropertyResource.value()).thenReturn("");
         when(defaultPropertyResource.format()).thenReturn(PropertyResourceFormat.PROPERTIES);
+        locale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
     }
 
     private Property mockProperty(String name,
@@ -953,4 +958,8 @@ class PropertyProducerBeanTest {
         });
     }
 
+    @AfterEach
+    public void teardown(){
+        Locale.setDefault(locale);
+    }
 }

@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldJunit5Extension;
 import org.jboss.weld.junit5.WeldSetup;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -32,7 +33,7 @@ class PropertyProducerBeanIT {
 
 	@WeldSetup
 	public WeldInitiator weld = WeldInitiator
-		.from(PropertyProducerBean.class)
+		.from(PropertyProducerBean.class, TestFileProvider.class)
 		.build();
 
     @Inject @Property
@@ -75,6 +76,10 @@ class PropertyProducerBeanIT {
     @Property
     int int3;
 
+    @BeforeAll
+    public static void setUp() {
+        System.setProperty("string6.property.name", "string6value.system");
+    }
     @Test
     void testString1_DefaultLookup() {
         assertEquals("string1value", string1);

@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLStreamHandler;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -52,32 +49,46 @@ class PropertyFactory {
         return new ClasspathURLStreamHandler(beanType.getClassLoader());
     }
 
+    URL getResourceUrl(String filename) throws MalformedURLException {
+        return getResourceUrlByLocation(filename, this.getClass());
+    }
+
     URL getResourceUrl(PropertyResource annotation, Class<?> beanType) throws MalformedURLException {
-        final String location = annotation.value();
-        final URL resourceUrl;
+        String location = annotation.value();
+
 
         if (location.isEmpty()) {
-            StringBuilder resourceName = new StringBuilder(CLASSPATH);
-            resourceName.append(':');
-            resourceName.append(beanType.getName().replace('.', '/'));
-            resourceName.append(".properties");
-            resourceUrl = new URL(null, resourceName.toString(), classPathHandler(beanType));
+                StringBuilder resourceName = new StringBuilder(CLASSPATH);
+                resourceName.append(':');
+                resourceName.append(beanType.getName().replace('.', '/'));
+                resourceName.append(".properties");
+                return new URL(null, resourceName.toString(), classPathHandler(beanType));
         } else {
-            final String resolvedLocation;
 
+            String resolvedLocation;
             if (annotation.resolveEnvironment()) {
                 resolvedLocation = replaceEnvironmentReferences(location);
             } else {
                 resolvedLocation = location;
             }
+            return getResourceUrlByLocation(resolvedLocation, beanType);
+        }
+    }
 
+    private URL getResourceUrlByLocation(String location,Class<?> beanType) throws MalformedURLException {
+        URL resourceUrl;
             try {
-                final URI resourceId = URI.create(resolvedLocation);
+                final URI resourceId;
+                if (location.indexOf(':')>0 && !location.startsWith(CLASSPATH)) { // we assume it is an url
+                       resourceId = new URL(location).toURI();
+                } else {
+                    resourceId = URI.create(location);
+                }
                 final String scheme = resourceId.getScheme();
 
                 if (scheme != null) {
                     if (CLASSPATH.equals(scheme)) {
-                        resourceUrl = new URL(null, resolvedLocation, classPathHandler(beanType));
+                        resourceUrl = new URL(null, location, classPathHandler(beanType));
                     } else {
                         resourceUrl = resourceId.toURL();
                     }
@@ -86,8 +97,10 @@ class PropertyFactory {
                 }
             } catch (IllegalArgumentException | MalformedURLException e) {
                 throw new InjectionException(e);
+            } catch (URISyntaxException e) {
+                throw new InjectionException(e);
             }
-        }
+
 
         return resourceUrl;
     }

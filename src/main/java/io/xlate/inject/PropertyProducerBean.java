@@ -33,8 +33,10 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -47,6 +49,9 @@ public class PropertyProducerBean {
     private static final Logger logger = Logger.getLogger(PropertyProducerBean.class.getName());
 
     private final PropertyFactory factory = new PropertyFactory();
+
+    @Inject
+    private Instance<PropertyFileProvider> propertyFilenameProvider;
 
     @Produces
     @Dependent
@@ -219,13 +224,20 @@ public class PropertyProducerBean {
             return systemProperty;
         }
 
+        final boolean hasGlobalFile = propertyFilenameProvider != null && propertyFilenameProvider.isResolvable();
+
         final PropertyResource resource = annotation.resource();
-        final String value;
-        final URL resourceUrl = factory.getResourceUrl(resource, beanType);
-        value = factory.getProperty(resourceUrl, resource.format(), resource.allowMissingResource(), propertyName, defaultValue);
+        String value;
+        URL resourceUrl = factory.getResourceUrl(resource, beanType);
+        value = factory.getProperty(resourceUrl, resource.format(), hasGlobalFile ? true : resource.allowMissingResource(), propertyName, defaultValue);
 
         if (value != null && annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);
+        }
+
+        if (value == null && hasGlobalFile){
+            resourceUrl = factory.getResourceUrl(propertyFilenameProvider.get().getLocation());
+            value = factory.getProperty(resourceUrl, resource.format(), resource.allowMissingResource(), propertyName, defaultValue);
         }
 
         return value;

@@ -16,3 +16,5 @@ hs_err_pid*
 /.project
 /doc/
 /property-inject.launch
+
+/.idea

@@ -23,9 +23,11 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class PropertyResourceProducerBean {
@@ -35,6 +37,9 @@ public class PropertyResourceProducerBean {
 
     private final PropertyFactory factory = new PropertyFactory();
 
+    @Inject
+    private Instance<PropertyFileProvider> propertyFilenameProvider;
+    
     @Produces
     @Dependent
     @PropertyResource
@@ -48,13 +53,22 @@ public class PropertyResourceProducerBean {
         final Class<?> beanType = point.getMember().getDeclaringClass();
         final PropertyResource annotation = annotated.getAnnotation(PropertyResource.class);
         final PropertyResourceFormat format = annotation.format();
-        URL resourceUrl = null;
 
+        Properties p = new Properties();
         try {
+            URL resourceUrl = null;
+            boolean hasGlobalPropertyFile =propertyFilenameProvider != null && propertyFilenameProvider.isResolvable();
+            if (hasGlobalPropertyFile) {
+                String globalFile = propertyFilenameProvider.get().getLocation();
+                resourceUrl = factory.getResourceUrl(globalFile);
+                p.putAll(factory.getProperties(resourceUrl, format, annotation.allowMissingResource()));
+            }
             resourceUrl = factory.getResourceUrl(annotation, beanType);
-            return factory.getProperties(resourceUrl, format, annotation.allowMissingResource());
+            p.putAll(factory.getProperties(resourceUrl, format, hasGlobalPropertyFile ? true: annotation.allowMissingResource()));
+            return p;
         } catch (Exception e) {
             throw new InjectionException(e);
         }
     }
+
 }
