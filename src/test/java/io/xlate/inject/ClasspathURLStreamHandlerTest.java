@@ -11,10 +11,7 @@ import java.net.URLConnection;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 class ClasspathURLStreamHandlerTest {
 
     ClasspathURLStreamHandler cut;

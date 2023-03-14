@@ -16,6 +16,7 @@
  ******************************************************************************/
 package io.xlate.inject;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -30,10 +31,7 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitPlatform.class)
 class PropertyInjectionExtensionTest {
 
     PropertyInjectionExtension ext;
@@ -65,7 +63,7 @@ class PropertyInjectionExtensionTest {
         extLogger.addHandler(handler);
         ext.beforeBeanDiscovery(event, beanManager);
         extLogger.removeHandler(handler);
-        org.junit.Assert.assertEquals(3, messages.size());
+        assertEquals(3, messages.size());
     }
 
     @Test
@@ -86,6 +84,6 @@ class PropertyInjectionExtensionTest {
         extLogger.addHandler(handler);
         ext.beforeBeanDiscovery(event, beanManager);
         extLogger.removeHandler(handler);
-        org.junit.Assert.assertEquals(0, messages.size());
+        assertEquals(0, messages.size());
     }
 }

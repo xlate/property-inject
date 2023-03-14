@@ -43,16 +43,10 @@ import javax.json.Json;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-@RunWith(JUnitPlatform.class)
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class PropertyProducerBeanTest {
 
@@ -745,7 +739,7 @@ class PropertyProducerBeanTest {
         extLogger.addHandler(handler);
         assertEquals(Float.valueOf(1_950_042.999f), bean.produceBigDecimalProperty(point).floatValue(), Float.MIN_VALUE);
         extLogger.removeHandler(handler);
-        org.junit.Assert.assertEquals(0, messages.size());
+        assertEquals(0, messages.size());
     }
 
     /*-****************** produce BigInteger *************************/
