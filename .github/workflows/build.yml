@@ -59,7 +59,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: target
-          path: target/
+          path: |
+            target/
+            !target/test-classes/io/xlate/inject/Unreadable.properties
 
   javadoc:
     runs-on: ubuntu-latest
