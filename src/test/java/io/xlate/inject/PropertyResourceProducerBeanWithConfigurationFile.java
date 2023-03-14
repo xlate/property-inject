@@ -16,29 +16,26 @@
  ******************************************************************************/
 package io.xlate.inject;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.Properties;
+
+import javax.inject.Inject;
+
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldJunit5Extension;
 import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.Properties;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-@RunWith(JUnitPlatform.class)
 @ExtendWith(WeldJunit5Extension.class)
-class PropertyResourceProducerBeanWithConfigurationFile {
+class PropertyResourceProducerBeanWithConfigurationFileIT {
 
-	@WeldSetup
-	WeldInitiator weld = WeldInitiator
-		.from(PropertyResourceProducerBean.class, TestFileProvider.class)
-		.build();
-
+    @WeldSetup
+    WeldInitiator weld = WeldInitiator
+            .from(PropertyResourceProducerBean.class, TestFileProvider.class)
+            .build();
 
     @Inject
     @PropertyResource
@@ -51,9 +48,6 @@ class PropertyResourceProducerBeanWithConfigurationFile {
 
     @Test
     void testGlobalFile() {
-        WeldInitiator weld = WeldInitiator
-                .from(PropertyResourceProducerBean.class, TestFileProvider.class)
-                .build();
         assertNotNull(defaultProps);
         System.out.println(defaultProps);
         assertEquals(3, defaultProps.size());
@@ -64,9 +58,6 @@ class PropertyResourceProducerBeanWithConfigurationFile {
 
     @Test
     void testGlobalFileOverriddenByLocalLocation() {
-        WeldInitiator weld = WeldInitiator
-                .from(PropertyResourceProducerBean.class, TestFileProvider.class)
-                .build();
         assertNotNull(props2);
         System.out.println(props2);
         assertEquals(3, props2.size());
