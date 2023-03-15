@@ -95,9 +95,7 @@ class PropertyFactory {
                 } else {
                     resourceUrl = new URL(null, CLASSPATH + ':' + location, classPathHandler(beanType));
                 }
-            } catch (IllegalArgumentException | MalformedURLException e) {
-                throw new InjectionException(e);
-            } catch (URISyntaxException e) {
+            } catch (IllegalArgumentException | MalformedURLException | URISyntaxException e) {
                 throw new InjectionException(e);
             }
 
