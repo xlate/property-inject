@@ -229,7 +229,7 @@ public class PropertyProducerBean {
         final PropertyResource resource = annotation.resource();
         String value;
         URL resourceUrl = factory.getResourceUrl(resource, beanType);
-        value = factory.getProperty(resourceUrl, resource.format(), hasGlobalFile ? true : resource.allowMissingResource(), propertyName, defaultValue);
+        value = factory.getProperty(resourceUrl, resource.format(), hasGlobalFile || resource.allowMissingResource(), propertyName, defaultValue);
 
         if (value != null && annotation.resolveEnvironment()) {
             return factory.replaceEnvironmentReferences(value);
