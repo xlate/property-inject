@@ -58,11 +58,11 @@ class PropertyFactory {
 
 
         if (location.isEmpty()) {
-                StringBuilder resourceName = new StringBuilder(CLASSPATH);
-                resourceName.append(':');
-                resourceName.append(beanType.getName().replace('.', '/'));
-                resourceName.append(".properties");
-                return new URL(null, resourceName.toString(), classPathHandler(beanType));
+            StringBuilder resourceName = new StringBuilder(CLASSPATH);
+            resourceName.append(':');
+            resourceName.append(beanType.getName().replace('.', '/'));
+            resourceName.append(".properties");
+            return new URL(null, resourceName.toString(), classPathHandler(beanType));
         } else {
 
             String resolvedLocation;
