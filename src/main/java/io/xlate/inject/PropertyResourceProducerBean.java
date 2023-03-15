@@ -64,7 +64,7 @@ public class PropertyResourceProducerBean {
                 p.putAll(factory.getProperties(resourceUrl, format, annotation.allowMissingResource()));
             }
             resourceUrl = factory.getResourceUrl(annotation, beanType);
-            p.putAll(factory.getProperties(resourceUrl, format, hasGlobalPropertyFile ? true: annotation.allowMissingResource()));
+            p.putAll(factory.getProperties(resourceUrl, format, hasGlobalPropertyFile || annotation.allowMissingResource()));
             return p;
         } catch (Exception e) {
             throw new InjectionException(e);
