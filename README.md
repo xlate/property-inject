@@ -1,4 +1,4 @@
-# Property Inject [![Build Status](https://travis-ci.org/xlate/property-inject.svg?branch=master)](https://travis-ci.org/xlate/property-inject) [![Coverage Status](https://coveralls.io/repos/github/xlate/property-inject/badge.svg?branch=master)](https://coveralls.io/github/xlate/property-inject?branch=master)
+# Property Inject ![build](https://github.com/xlate/property-inject/workflows/Build/badge.svg?branch=master) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=xlate_property-inject&metric=coverage)](https://sonarcloud.io/summary/new_code?id=xlate_property-inject) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xlate_property-inject&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=xlate_property-inject)
 
 Simple CDI extension to support injection of java.util.Properties values.
 
