@@ -30,35 +30,41 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(WeldJunit5Extension.class)
-class PropertyResourceProducerBeanIT {
+class PropertyResourceProducerBeanWithConfigurationFileIT {
 
-	@WeldSetup
-	WeldInitiator weld = WeldInitiator
-		.from(PropertyResourceProducerBean.class)
-		.build();
-
+    @WeldSetup
+    WeldInitiator weld = WeldInitiator
+            .from(PropertyResourceProducerBean.class, TestFileProvider.class)
+            .build();
 
     @Inject
     @PropertyResource
     Properties defaultProps;
+
 
     @Inject
     @PropertyResource("io/xlate/inject/PropertyResourceProducerBeanIT2.properties")
     Properties props2;
 
     @Test
-    void testDefaultProps() {
+    void testGlobalFile() {
         assertNotNull(defaultProps);
-        assertEquals(2, defaultProps.size());
-        assertEquals("val1", defaultProps.getProperty("key1"));
-        assertEquals("val2", defaultProps.getProperty("key2"));
+        System.out.println(defaultProps);
+        assertEquals(3, defaultProps.size());
+        assertEquals("x", defaultProps.getProperty("key1"));
+        assertEquals("y", defaultProps.getProperty("key2"));
+        assertEquals("false", defaultProps.getProperty("value.is.found"));
     }
 
     @Test
-    void testProps2() {
+    void testGlobalFileOverriddenByLocalLocation() {
         assertNotNull(props2);
-        assertEquals(1, props2.size());
+        System.out.println(props2);
+        assertEquals(3, props2.size());
         assertEquals("true", props2.getProperty("value.is.found"));
+        assertEquals("x", props2.getProperty("key1"));
+        assertEquals("y", props2.getProperty("key2"));
     }
+
 
 }

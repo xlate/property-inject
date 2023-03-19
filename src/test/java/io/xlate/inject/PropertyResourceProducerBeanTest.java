@@ -32,6 +32,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest {
 
@@ -137,6 +139,7 @@ class PropertyResourceProducerBeanTest extends AbstractInjectionPointTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void testProducePropertiesUnreadable() {
         File resource = new File("target/test-classes/io/xlate/inject/Unreadable.properties");
         resource.setReadable(false);
