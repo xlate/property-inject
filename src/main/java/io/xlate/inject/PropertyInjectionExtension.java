@@ -28,7 +28,7 @@ public class PropertyInjectionExtension implements Extension {
 
     private static final Logger logger = Logger.getLogger(PropertyInjectionExtension.class.getName());
 
-    void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event, BeanManager beanManager) {
+    void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event, final BeanManager beanManager) {
         final String method = "PropertyInjectionExtension.beforeBeanDiscovery()";
 
         logger.log(Level.FINER, () -> method + " beanManager = " + beanManager);
@@ -37,10 +37,10 @@ public class PropertyInjectionExtension implements Extension {
         addAnnotatedType(event, beanManager, PropertyResourceProducerBean.class);
     }
 
-    void addAnnotatedType(BeforeBeanDiscovery event, BeanManager beanManager, Class<?> type) {
+    void addAnnotatedType(final BeforeBeanDiscovery event, final BeanManager beanManager, final Class<?> type) {
         final String method = "PropertyInjectionExtension.addAnnotatedType()";
 
-        event.addAnnotatedType(beanManager.createAnnotatedType(type));
+        event.addAnnotatedType(beanManager.createAnnotatedType(type), type.getName());
 
         logger.log(Level.FINER, () -> method + " added type: " + type.getName());
     }
