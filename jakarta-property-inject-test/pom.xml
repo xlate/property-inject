@@ -15,6 +15,7 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
     </properties>
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -25,7 +26,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -45,4 +45,128 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <environmentVariables>
+                        <INJECTED_VARIABLE>This value was set as an environment
+                            variable!</INJECTED_VARIABLE>
+                        <STRING7>string7value.env</STRING7>
+                        <RESOURCE_LOC0>
+                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+                        <RESOURCE_LOC1>
+                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>
+                            ${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+                        <string6.property.name>string6value.system</string6.property.name>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <environmentVariables>
+                        <INJECTED_VARIABLE>This value was set as an environment
+                            variable!</INJECTED_VARIABLE>
+                        <STRING7>string7value.env</STRING7>
+                        <RESOURCE_LOC0>
+                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+                        <RESOURCE_LOC1>
+                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <java.util.logging.config.file>
+                            ${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+                        <string6.property.name>string6value.system</string6.property.name>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-prepare-agent-integration</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report-integration</id>
+                        <goals>
+                            <goal>report-integration</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*Test.class</exclude>
+                        <exclude>**/*IT.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                        <configuration>
+                            <finalName>unwanted</finalName>
+                            <classifier>unwanted</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -45,7 +45,6 @@
                                 <groupId>io.xlate</groupId>
                                 <artifactId>javax-property-inject</artifactId>
                                 <version>${project.version}</version>
-                                
                             </artifact>
                         </configuration>
                     </execution>
@@ -53,4 +52,26 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.4.1</version>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Automatic-Module-Name>
+                                        io.xlate.inject.property</Automatic-Module-Name>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
