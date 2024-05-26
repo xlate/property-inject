@@ -298,8 +298,43 @@
         <profile>
             <id>javax</id>
             <properties>
-                <maven.compiler.release>8</maven.compiler.release>
+                <maven.compiler.release>1.8</maven.compiler.release>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <argLine>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                    --add-opens=java.base/java.lang=ALL-UNNAMED 
+                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED 
+                    --add-opens=java.base/java.io=ALL-UNNAMED 
+                    --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</argLine>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <release>8</release>
+                            <source>8</source>
+                            <target>8</target>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>base-compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- recompile everything for target VM
+                                    except the module-info.java -->
+                                    <excludes>
+                                        <exclude>module-info.java</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <dependencies>
                 <dependency>
                     <groupId>org.mockito</groupId>
@@ -390,8 +425,6 @@
                             <rules>
                                 <jakartaDefaults>true</jakartaDefaults>
                             </rules>
-                            <transformDirectory>
-                                ${project.build.sourceDirectory}</transformDirectory>
                         </configuration>
                         <executions>
                             <execution>
@@ -401,7 +434,19 @@
                                     <goal>transform</goal>
                                 </goals>
                                 <configuration>
-                                    <transformDirectory>${basedir}/src/main/resources</transformDirectory>
+                                    <transformDirectory>
+                                        ${basedir}/src/main/resources</transformDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>jakarta-src-jar</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>transform</goal>
+                                </goals>
+                                <configuration>
+                                    <transformDirectory>
+                                        ${basedir}/src/main/java</transformDirectory>
                                 </configuration>
                             </execution>
                             <execution>
@@ -411,7 +456,8 @@
                                     <goal>transform</goal>
                                 </goals>
                                 <configuration>
-                                    <transformDirectory>${project.basedir}/src/test/java</transformDirectory>
+                                    <transformDirectory>
+                                        ${project.basedir}/src/test/java</transformDirectory>
                                 </configuration>
                             </execution>
                         </executions>
