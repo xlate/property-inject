@@ -2,10 +2,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.xlate</groupId>
     <artifactId>property-inject</artifactId>
-    <version>1.1.1</version>
+  <version>1.1.1-SNAPSHOT</version>
+
     <name>Property Injection for Java</name>
-    <description>Inject values from java.util.Properties using the Java CDI
-        framework</description>
+  <description>Inject values from java.util.Properties using the Java CDI framework</description>
     <url>https://github.com/xlate/property-inject</url>
     <issueManagement>
         <url>https://github.com/xlate/property-inject/issues</url>
@@ -14,9 +14,8 @@
     <scm>
         <url>https://github.com/xlate/property-inject</url>
         <connection>scm:git:https://github.com/xlate/property-inject.git</connection>
-        <developerConnection>
-            scm:git:ssh://git@github.com/xlate/property-inject.git</developerConnection>
-        <tag>v1.1.1</tag>
+    <developerConnection>scm:git:ssh://git@github.com/xlate/property-inject.git</developerConnection>
+    <tag>HEAD</tag>
     </scm>
     <licenses>
         <license>
@@ -53,8 +52,7 @@
         <sonar.projectKey>xlate_property-inject</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>xlate</sonar.organization>
-        <sonar.coverage.jacoco.xmlReportPaths>
-            target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <!-- Dependency versions -->
         <eclipse.parsson.version>1.1.6</eclipse.parsson.version>
         <jakarta.enterprise.cdi-api>4.0.1</jakarta.enterprise.cdi-api>
@@ -90,7 +88,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.3</version>
+                    <version>3.7.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -107,19 +105,15 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <environmentVariables>
-                        <INJECTED_VARIABLE>This value was set as an environment
-                            variable!</INJECTED_VARIABLE>
+            <INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
                         <STRING7>string7value.env</STRING7>
-                        <RESOURCE_LOC0>
-                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
-                        <RESOURCE_LOC1>
-                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
+            <RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+            <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
                     </environmentVariables>
-                    <systemPropertyVariables>
-                        <java.util.logging.config.file>
-                            ${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+          <systemProperties>
+            <java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
                         <string6.property.name>string6value.system</string6.property.name>
-                    </systemPropertyVariables>
+          </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -129,19 +123,15 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <environmentVariables>
-                        <INJECTED_VARIABLE>This value was set as an environment
-                            variable!</INJECTED_VARIABLE>
+            <INJECTED_VARIABLE>This value was set as an environment variable!</INJECTED_VARIABLE>
                         <STRING7>string7value.env</STRING7>
-                        <RESOURCE_LOC0>
-                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
-                        <RESOURCE_LOC1>
-                            file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
+            <RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
+            <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
                     </environmentVariables>
-                    <systemPropertyVariables>
-                        <java.util.logging.config.file>
-                            ${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
+          <systemProperties>
+            <java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
                         <string6.property.name>string6value.system</string6.property.name>
-                    </systemPropertyVariables>
+          </systemProperties>
                 </configuration>
                 <executions>
                     <execution>
@@ -239,8 +229,7 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>
-                                        io.xlate.inject.property</Automatic-Module-Name>
+                  				  <Automatic-Module-Name>io.xlate.inject.property</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -262,7 +251,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+            			<version>1.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
