@@ -27,8 +27,8 @@ import java.io.File;
 import java.lang.reflect.Member;
 import java.util.Properties;
 
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.InjectionException;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

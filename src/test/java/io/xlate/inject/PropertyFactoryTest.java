@@ -27,9 +27,9 @@ import java.lang.reflect.Member;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.enterprise.inject.spi.AnnotatedParameter;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.spi.AnnotatedParameter;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

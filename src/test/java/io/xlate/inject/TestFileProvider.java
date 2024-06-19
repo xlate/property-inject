@@ -1,7 +1,7 @@
 package io.xlate.inject;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Default;
 
 @ApplicationScoped
 @Default

@@ -19,10 +19,10 @@ package io.xlate.inject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
+import jakarta.enterprise.inject.spi.Extension;
 
 public class PropertyInjectionExtension implements Extension {
 
@@ -40,7 +40,7 @@ public class PropertyInjectionExtension implements Extension {
     void addAnnotatedType(BeforeBeanDiscovery event, BeanManager beanManager, Class<?> type) {
         final String method = "PropertyInjectionExtension.addAnnotatedType()";
 
-        event.addAnnotatedType(beanManager.createAnnotatedType(type));
+        event.addAnnotatedType(beanManager.createAnnotatedType(type), type.getName());
 
         logger.log(Level.FINER, () -> method + " added type: " + type.getName());
     }
