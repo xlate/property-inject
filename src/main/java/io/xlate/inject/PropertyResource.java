@@ -22,9 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Properties;
 
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.util.Nonbinding;
-import javax.inject.Qualifier;
+import jakarta.enterprise.inject.InjectionException;
+import jakarta.enterprise.util.Nonbinding;
+import jakarta.inject.Qualifier;
 
 @Qualifier
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
