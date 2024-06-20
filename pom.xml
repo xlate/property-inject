@@ -149,10 +149,10 @@
             <RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
             <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
           </environmentVariables>
-          <systemProperties>
+          <systemPropertyVariables>
             <java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
             <string6.property.name>string6value.system</string6.property.name>
-          </systemProperties>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
@@ -167,10 +167,10 @@
             <RESOURCE_LOC0>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyProducerBeanTest.properties</RESOURCE_LOC0>
             <RESOURCE_LOC1>file:${project.build.directory}/test-classes/io/xlate/inject/PropertyResourceProducerBeanTest.properties</RESOURCE_LOC1>
           </environmentVariables>
-          <systemProperties>
+          <systemPropertyVariables>
             <java.util.logging.config.file>${project.build.directory}/test-classes/logging.properties</java.util.logging.config.file>
             <string6.property.name>string6value.system</string6.property.name>
-          </systemProperties>
+          </systemPropertyVariables>
         </configuration>
         <executions>
           <execution>
