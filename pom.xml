@@ -60,7 +60,7 @@
     <sonar.organization>xlate</sonar.organization>
     <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <!-- Dependency versions -->
-    <eclipse.parsson.version>1.1.6</eclipse.parsson.version>
+    <eclipse.parsson.version>1.1.7</eclipse.parsson.version>
     <jakarta.enterprise.cdi-api>4.0.1</jakarta.enterprise.cdi-api>
     <transformer-maven-plugin.version>0.5.0</transformer-maven-plugin.version>
   </properties>
